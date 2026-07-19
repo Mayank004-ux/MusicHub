@@ -120,4 +120,7 @@ public Page<Song> getSongsByPage(int page) {
     Pageable pageable = PageRequest.of(page , 4);
     return songRepository.findAll(pageable);
 }
+public List<Song> getTopRatedSongs() {
+    return songRepository.findByRatingGreaterThanEqual(4);
+}
 }

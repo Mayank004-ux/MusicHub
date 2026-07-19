@@ -30,4 +30,6 @@ List<Song> findAllByOrderByTitleAsc();
 List<Song> findAllByOrderByTitleDesc();
 
 Page<Song> findAll(Pageable pageable);
+
+List<Song> findByRatingGreaterThanEqual(Integer rating);
 }

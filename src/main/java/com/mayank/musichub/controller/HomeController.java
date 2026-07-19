@@ -117,6 +117,37 @@ public String showSongsByArtist(@PathVariable String artist, Model model) {
     return "artist";
 
 }
+@GetMapping("/sort")
+public String sortSongs(
+        @RequestParam(required = false) String type,
+        Model model) {
+
+    if ("rating".equals(type)) {
+
+        model.addAttribute("songs", songService.getSongsByRating());
+
+    } else if ("year".equals(type)) {
+
+        model.addAttribute("songs", songService.getSongsByReleaseYear());
+
+    } else if ("titleAsc".equals(type)) {
+
+        model.addAttribute("songs", songService.getSongsByTitleAsc());
+
+    } else if ("titleDesc".equals(type)) {
+
+        model.addAttribute("songs", songService.getSongsByTitleDesc());
+
+    } else {
+
+        model.addAttribute("songs", songService.getAllSongs());
+
+    }
+
+    model.addAttribute("sortType", type);
+
+    return "sort";
+}
 @GetMapping("/sort/rating")
 public String sortByRating(Model model) {
 
@@ -156,5 +187,12 @@ public String sortByTitleDesc(Model model) {
 
     return "sort";
 
+}
+@GetMapping("/top-rated")
+public String topRatedSongs(Model model) {
+
+    model.addAttribute("songs", songService.getTopRatedSongs());
+
+    return "top-rated";
 }
 }

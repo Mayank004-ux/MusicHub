@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MusicHub</title>
+    <title>Sorted Songs</title>
     <p class="subtitle">
 
 Your Personal Music Library
@@ -11,121 +11,14 @@ Your Personal Music Library
 </head>
 
 <body>
-    <div class="navbar">
 
-    <div class="logo">
-        🎵 MusicHub
-    </div>
+    <h1>⭐ Top Rated Songs</h1>
 
-    <div class="nav-links">
-
-        <a href="/">Home</a>
-
-        <a href="/favorites">Favorites</a>
-
-        <a href="/sort">Sort</a>
-
-        <a href="/song/add">Add Song</a>
-
-    </div>
-
-</div>
-
-    <div class="hero-section">
-
-    <h1>🎵 MusicHub</h1>
-
-    <p class="hero-text">
-        Discover • Organize • Enjoy Your Favorite Music
-    </p>
-
-    <p class="hero-subtitle">
-        Manage your personal music collection with genres,
-        artists, favorites, ratings and much more.
-    </p>
-
-</div>
-
-    <div class="navigation-buttons">
-
-    <a href="/favorites" class="favorite-page-btn">
-        ❤️ Favorite Songs
-    </a>
-
-</div>
-<a href="/top-rated" class="favorite-page-btn">
-    ⭐ Top Rated Songs
-</a>
+   <a href="/" class="back-btn">⬅ Back to Home</a>
 
 <br>
 
-<div class="genre-buttons">
 
-    <strong>Genres</strong>
-
-    <br><br>
-
-    <a href="/genre/Rock" class="genre-btn">🎸 Rock</a>
-
-    <a href="/genre/Pop" class="genre-btn">🎤 Pop</a>
-
-    <a href="/genre/Hip-Hop" class="genre-btn">🎧 Hip-Hop</a>
-
-    <a href="/genre/Classical" class="genre-btn">🎼 Classical</a>
-
-</div>
-
-<div class="artist-buttons">
-
-    <strong>Artists</strong>
-
-    <br><br>
-
-    <a href="/artist/Imagine%20Dragons" class="artist-btn">
-        🎤 Imagine Dragons
-    </a>
-
-    <a href="/artist/Linkin%20Park" class="artist-btn">
-        🎸 Linkin Park
-    </a>
-
-    <a href="/artist/Alan%20Walker" class="artist-btn">
-        🎧 Alan Walker
-    </a>
-
-    <a href="/artist/Arijit%20Singh" class="artist-btn">
-        🎼 Arijit Singh
-    </a>
-
-    <a href="/artist/Luis%20Fonsi" class="artist-btn">
-        🎼 Luis Fonsi
-    </a>
-
-</div>
-
-<div class="sort-buttons">
-
-    <strong>Sort Songs</strong>
-
-    <br><br>
-
-    <a href="/sort/rating" class="sort-btn">
-        ⭐ Rating
-    </a>
-
-    <a href="/sort/year" class="sort-btn">
-        📅 Release Year
-    </a>
-
-    <a href="/sort/title-asc" class="sort-btn">
-        🔤 Title (A-Z)
-    </a>
-
-    <a href="/sort/title-desc" class="sort-btn">
-        🔤 Title (Z-A)
-    </a>
-
-</div>
 
 <br>
 <br>
@@ -138,15 +31,7 @@ Your Personal Music Library
     placeholder="Search here...">
     <br>
 
-<a href="/song/add">
 
-    <button class="add-btn">
-
-        ➕ Add New Song
-
-    </button>
-
-</a>
 
     <hr>
 
@@ -236,24 +121,6 @@ th:text="${song.language}">
 </form>
 
     </div>
-
-</div>
-<div class="pagination">
-
-    <a th:if="${currentPage > 0}"
-       th:href="@{/(page=${currentPage - 1})}"
-       class="page-btn">
-        ⬅ Previous
-    </a>
-
-    <span th:text="'Page ' + (${currentPage + 1}) + ' of ' + ${totalPages}">
-    </span>
-
-    <a th:if="${currentPage < totalPages - 1}"
-       th:href="@{/(page=${currentPage + 1})}"
-       class="page-btn">
-        Next ➡
-    </a>
 
 </div>
 <script>
