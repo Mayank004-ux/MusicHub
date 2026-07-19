@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Song Details</title>
+
+    <link rel="stylesheet" th:href="@{/style.css}">
+
+</head>
+
+<body>
+
+<h1>🎵 Song Details</h1>
+
+<img
+    th:src="${song.imageUrl}"
+    class="details-image"
+    alt="Album Cover">
+
+<div class="song-card">
+
+    <h2 th:text="${song.title}"></h2>
+
+    <p>
+        <b>Artist:</b>
+        <span th:text="${song.artist}"></span>
+    </p>
+
+    <p>
+        <b>Album:</b>
+        <span th:text="${song.album}"></span>
+    </p>
+    <p>
+         <b>Genre:<b>
+<span th:text="${song.genre}"></span>
+</p>
+<p>
+
+Language :
+
+<span
+th:text="${song.language}">
+
+</span>
+
+</p>
+<p>
+
+<strong>Duration :</strong>
+
+⏱ <span th:text="${song.duration}"></span>
+
+</p>
+<p>
+    <strong>Release Year:</strong>
+    <span th:text="${song.releaseYear}"></span>
+</p>
+<p>
+
+<strong>Rating :</strong>
+
+⭐ <span th:text="${song.rating}"></span>/5
+
+</p>
+<p th:if="${song.favorite}">
+    <strong>Status:</strong> ❤️ Favorite
+</p>
+
+<p th:unless="${song.favorite}">
+    <strong>Status:</strong> 🤍 Not Favorite
+</p>
+<h3>📝 Lyrics</h3>
+
+<div class="lyrics-box">
+
+    <div th:text="${song.lyrics}" class="lyrics-text"></div>
+
+</div>
+<div style="margin-top:20px;">
+
+    <a th:href="${song.youtubeUrl}"
+       target="_blank"
+       th:if="${song.youtubeUrl != null and !#strings.isEmpty(song.youtubeUrl)}">
+
+        <button class="youtube-btn">
+
+            ▶ Watch on YouTube
+
+        </button>
+
+    </a>
+
+</div>
+<div style="margin-top:15px;">
+
+    <a th:href="${song.spotifyUrl}"
+       target="_blank"
+       th:if="${song.spotifyUrl != null and !#strings.isEmpty(song.spotifyUrl)}">
+
+        <button class="spotify-btn">
+
+            🎵 Listen on Spotify
+
+        </button>
+
+    </a>
+
+</div>
+    <br>
+
+    <a href="/">
+        ⬅ Back to Home
+    </a>
+
+</div>
+
+</body>
+
+</html>

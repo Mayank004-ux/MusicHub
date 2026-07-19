@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Edit Song</title>
+
+    <link rel="stylesheet" th:href="@{/style.css}">
+
+</head>
+
+<body>
+
+<h1>Edit Song</h1>
+
+<form th:action="@{/song/update/{id}(id=${song.id})}"
+      method="post">
+
+    <label>Title</label>
+
+    <input
+        type="text"
+        name="title"
+        th:value="${song.title}">
+
+    <br><br>
+
+    <label>Artist</label>
+
+    <input
+        type="text"
+        name="artist"
+        th:value="${song.artist}">
+
+    <br><br>
+
+    <label>Album</label>
+
+    <input
+        type="text"
+        name="album"
+        th:value="${song.album}">
+
+    <br><br>
+
+    <label>Genre</label>
+
+<input
+    type="text"
+    name="genre"
+    th:value="${song.genre}">
+
+    <br><br>
+
+    <label>Language</label>
+
+<input
+type="text"
+name="language"
+th:value="${song.language}">
+
+  <br><br>
+
+<label>Rating</label>
+
+<input
+    type="number"
+    min="1"
+    max="5"
+    th:field="${song.rating}">
+
+    <br><br>  
+    <label>Duration</label>
+
+<input
+    type="text"
+    name="duration"
+    th:value="${song.duration}"
+    placeholder="Example: 3:24">
+
+<br><br>
+
+<label>Release Year</label>
+
+<input
+    type="number"
+    name="releaseYear"
+    th:value="${song.releaseYear}"
+    placeholder="Example: 2017">
+
+<br><br>
+<label>YouTube URL</label>
+
+<input
+    type="url"
+    name="youtubeUrl"
+    th:value="${song.youtubeUrl}"
+    placeholder="https://www.youtube.com/watch?v=...">
+
+<br><br>
+<label>Spotify URL</label>
+
+<input
+    type="url"
+    name="spotifyUrl"
+    th:value="${song.spotifyUrl}"
+    placeholder="https://open.spotify.com/track/...">
+
+<br><br>
+<label>Favorite</label>
+
+<input
+    type="checkbox"
+    name="favorite"
+    th:checked="${song.favorite}">
+
+<br><br>
+<label>Lyrics</label>
+
+<textarea
+    name="lyrics"
+    rows="8"
+    cols="50"
+    th:text="${song.lyrics}"
+    placeholder="Enter song lyrics here...">
+</textarea>
+
+<br><br>
+
+<label>Image URL</label>
+
+<input
+    type="text"
+    name="imageUrl"
+    th:value="${song.imageUrl}">
+
+    <button type="submit">
+
+        Save Changes
+
+    </button>
+
+</form>
+
+<br>
+
+<a href="/">⬅ Back</a>
+
+</body>
+
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Add Song</title>
+
+    <link rel="stylesheet" th:href="@{/style.css}">
+
+</head>
+
+<body>
+
+<h1>Add New Song</h1>
+
+<form th:action="@{/song/save}"
+
+      method="post"
+
+      th:object="${song}">
+
+<label>Title</label>
+
+<input type="text"
+
+       th:field="*{title}">
+
+<br><br>
+
+<label>Artist</label>
+
+<input type="text"
+
+       th:field="*{artist}">
+
+<br><br>
+
+<label>Album</label>
+
+<input type="text"
+
+       th:field="*{album}">
+
+<br><br>
+
+<label>Genre</label>
+
+<input
+    type="text"
+
+    th:field="*{genre}">
+
+<br><br>    
+
+     <label>Language</label>
+
+<input
+type="text"
+
+th:field="*{language}">
+
+<br><br>
+
+<label>Rating</label>
+
+<input
+    type="number"
+    min="1"
+    max="5"
+    th:field="*{rating}">
+
+<br><br>
+
+<label>Duration</label>
+
+<input
+    type="text"
+    th:field="*{duration}"
+    placeholder="Example: 3:24">
+
+<br><br>
+
+<label>Release Year</label>
+
+<input
+    type="number"
+    th:field="*{releaseYear}"
+    placeholder="Example: 2017">
+
+<br><br>
+<label>YouTube URL</label>
+
+<input
+    type="url"
+    th:field="*{youtubeUrl}"
+    placeholder="https://www.youtube.com/watch?v=...">
+
+<br><br>
+<label>Spotify URL</label>
+
+<input
+    type="url"
+    th:field="*{spotifyUrl}"
+    placeholder="https://open.spotify.com/track/...">
+
+<br><br>
+<label>Favorite</label>
+
+<input
+    type="checkbox"
+    th:field="*{favorite}">
+
+<br><br>
+<label>Lyrics</label>
+
+<textarea
+    th:field="*{lyrics}"
+    rows="8"
+    cols="50"
+    placeholder="Enter song lyrics here...">
+</textarea>
+
+<br><br>
+
+<label>Image URL</label>
+
+<input
+    type="text"
+    th:field="*{imageUrl}">
+
+ <br><br>   
+
+<button type="submit">
+
+      
+Save Song
+
+</button>
+
+</form>
+
+<br>
+
+<a href="/">⬅ Back</a>
+
+</body>
+
+</html>

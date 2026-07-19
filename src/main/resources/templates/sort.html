@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sorted Songs</title>
+    <p class="subtitle">
+
+Your Personal Music Library
+
+</p>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+
+<body>
+
+    <h1 th:text="'📊 Sorted By : ' + ${sortType}"></h1>
+
+   <a href="/" class="back-btn">⬅ Back to Home</a>
+
+<br>
+
+
+
+<br>
+<br>
+
+    <h3>Search Songs</h3>
+
+    <input
+    type="text"
+    id="searchInput"
+    placeholder="Search here...">
+    <br>
+
+
+
+    <hr>
+
+  <div class="song-card" th:each="song : ${songs}">
+
+    <img th:src="${song.imageUrl}"
+     alt="Album Cover"
+     class="album-cover">
+ <div class="card-content">
+
+    <!-- Song title -->
+    <!-- Artist -->
+    <!-- Album -->
+    <!-- Genre -->
+    <!-- Language -->
+    <!-- Buttons -->
+
+</div>
+    <h2 class="song-title" th:text="${song.title}"></h2>
+
+    <p>
+        👤 <span class="song-artist" th:text="${song.artist}"></span>
+    </p>
+
+    <p>
+        💿 <span class="song-album" th:text="${song.album}"></span>
+    </p>
+    <p>
+
+🎼
+
+<span th:text="${song.genre}"> </span>
+<p>
+
+🌍
+
+<span
+th:text="${song.language}">
+</span>
+<p>
+    ⭐ <span th:text="${song.rating}"></span>/5
+</p>
+<p th:if="${song.favorite}">
+    ❤️ Favorite
+</p>
+
+<p th:unless="${song.favorite}">
+    🤍 Not Favorite
+</p>
+<p>
+    ⏱ <span th:text="${song.duration}"></span>
+</p>
+<p>
+    📅 <span th:text="${song.releaseYear}"></span>
+</p>
+</p>
+</p>
+    <div class="button-group">
+
+       <a th:href="@{/song/{id}(id=${song.id})}">
+
+    <button class="details-btn">
+
+        Details
+
+    </button>
+
+</a>
+
+       <a th:href="@{/song/edit/{id}(id=${song.id})}">
+    <button class="edit-btn">
+        Edit
+    </button>
+</a>
+
+        <form th:action="@{/song/delete/{id}(id=${song.id})}"
+      method="post"
+      style="display:inline;">
+
+    <button class="delete-btn"
+            onclick="return confirm('Are you sure you want to delete this song?')">
+
+        Delete
+
+    </button>
+
+</form>
+
+    </div>
+
+</div>
+<script>
+
+const searchInput = document.getElementById("searchInput");
+
+searchInput.addEventListener("keyup", function () {
+
+    const keyword = searchInput.value.toLowerCase();
+
+    const cards = document.querySelectorAll(".song-card");
+
+    cards.forEach(function(card){
+
+        const title =
+        card.querySelector(".song-title").innerText.toLowerCase();
+
+        const artist =
+        card.querySelector(".song-artist").innerText.toLowerCase();
+
+        const album =
+        card.querySelector(".song-album").innerText.toLowerCase();
+
+        if(title.includes(keyword)
+            || artist.includes(keyword)
+            || album.includes(keyword)){
+
+            card.style.display="block";
+
+        }else{
+
+            card.style.display="none";
+
+        }
+
+    });
+
+});
+
+</script>
+</body>
+</html>
