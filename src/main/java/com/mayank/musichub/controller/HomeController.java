@@ -35,8 +35,20 @@ public String home(
 
     model.addAttribute("totalPages", songPage.getTotalPages());
 
-    return "index";
+    // Dashboard Statistics
+    model.addAttribute("totalSongs", songService.getTotalSongs());
 
+    model.addAttribute("favoriteSongs", songService.getFavoriteSongsCount());
+
+    model.addAttribute("totalArtists", songService.getTotalArtists());
+
+    model.addAttribute("totalGenres", songService.getTotalGenres());
+
+    model.addAttribute("totalAlbums", songService.getTotalAlbums());
+
+    model.addAttribute("averageRating", songService.getAverageRating());
+
+    return "index";
 }
     @GetMapping("/song/{id}")
 public String songDetails(@PathVariable Integer id,
@@ -195,4 +207,5 @@ public String topRatedSongs(Model model) {
 
     return "top-rated";
 }
+
 }

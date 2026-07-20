@@ -2,8 +2,10 @@ package com.mayank.musichub.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+
 import com.mayank.musichub.model.Song;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -32,4 +34,19 @@ List<Song> findAllByOrderByTitleDesc();
 Page<Song> findAll(Pageable pageable);
 
 List<Song> findByRatingGreaterThanEqual(Integer rating);
+
+long countByFavoriteTrue();
+
+@Query("SELECT COUNT(DISTINCT s.artist) FROM Song s")
+long countDistinctArtists();
+
+@Query("SELECT COUNT(DISTINCT s.genre) FROM Song s")
+long countDistinctGenres();
+
+@Query("SELECT COUNT(DISTINCT s.album) FROM Song s")
+long countDistinctAlbums();
+
+@Query("SELECT AVG(s.rating) FROM Song s")
+Double getAverageRating();
+
 }

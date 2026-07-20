@@ -46,6 +46,43 @@ Your Personal Music Library
 
 </div>
 
+<div class="dashboard">
+
+    <div class="dashboard-card">
+        <h2>🎵</h2>
+        <h3 th:text="${totalSongs}"></h3>
+        <p>Total Songs</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2>❤️</h2>
+        <h3 th:text="${favoriteSongs}"></h3>
+        <p>Favorites</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2>🎤</h2>
+        <h3 th:text="${totalArtists}"></h3>
+        <p>Artists</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2>🎼</h2>
+        <h3 th:text="${totalGenres}"></h3>
+        <p>Genres</p>
+    </div>
+    <div class="dashboard-card">
+    <h2>💿</h2>
+    <h3 th:text="${totalAlbums}"></h3>
+    <p>Albums</p>
+</div>
+<div class="dashboard-card">
+    <h2>⭐</h2>
+    <h3 th:text="${averageRating}"></h3>
+    <p>Average Rating</p>
+</div>
+</div>
+
     <div class="navigation-buttons">
 
     <a href="/favorites" class="favorite-page-btn">

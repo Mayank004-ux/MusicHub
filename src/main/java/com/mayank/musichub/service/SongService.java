@@ -123,4 +123,33 @@ public Page<Song> getSongsByPage(int page) {
 public List<Song> getTopRatedSongs() {
     return songRepository.findByRatingGreaterThanEqual(4);
 }
+public long getTotalSongs() {
+    return songRepository.count();
+}
+
+public long getFavoriteSongsCount() {
+    return songRepository.countByFavoriteTrue();
+}
+
+public long getTotalArtists() {
+    return songRepository.countDistinctArtists();
+}
+
+public long getTotalGenres() {
+    return songRepository.countDistinctGenres();
+}
+public long getTotalAlbums() {
+    return songRepository.countDistinctAlbums();
+}
+public Double getAverageRating() {
+
+    Double average = songRepository.getAverageRating();
+
+    if (average == null) {
+        return 0.0;
+    }
+
+    return Math.round(average * 10.0) / 10.0;
+
+}
 }
