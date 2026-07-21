@@ -681,3 +681,28 @@ button:hover{
     color:#555;
 
 }
+.playlist-page-btn {
+
+    background-color: #6f42c1;
+    color: white;
+
+    padding: 10px 20px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    margin-left: 10px;
+
+    transition: 0.3s;
+}
+
+.playlist-page-btn:hover {
+
+    background-color: #5a32a3;
+
+    transform: scale(1.05);
+
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Add Songs</title>
+
+    <link rel="stylesheet" th:href="@{/style.css}">
+
+</head>
+
+<body>
+
+<h1>Add Songs to Playlist</h1>
+
+<h2 th:text="${playlist.name}"></h2>
+
+<form th:action="@{/playlist/{id}/add-songs(id=${playlist.id})}"
+      method="post">
+
+    <div th:each="song : ${songs}">
+
+        <label>
+
+            <input type="checkbox"
+                   name="songIds"
+                   th:value="${song.id}">
+
+            <span th:text="${song.title}"></span>
+
+            -
+
+            <span th:text="${song.artist}"></span>
+
+        </label>
+
+        <br><br>
+
+    </div>
+
+    <button type="submit"
+            class="add-btn">
+
+        Save Songs
+
+    </button>
+
+</form>
+
+<br>
+
+<a th:href="@{/playlist/{id}(id=${playlist.id})}">
+
+    <button>
+
+        Back
+
+    </button>
+
+</a>
+
+</body>
+
+</html>

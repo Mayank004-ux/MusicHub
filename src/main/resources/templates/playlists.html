@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Playlists</title>
+
+    <link rel="stylesheet" th:href="@{/style.css}">
+
+</head>
+
+<body>
+
+<h1>🎵 My Playlists</h1>
+
+<br>
+
+<a href="/playlist/add">
+
+    <button class="add-btn">
+
+        ➕ Create Playlist
+
+    </button>
+
+</a>
+
+<hr>
+
+<div th:if="${#lists.isEmpty(playlists)}">
+
+    <h3>No playlists created yet.</h3>
+
+</div>
+
+<div class="song-card"
+
+     th:each="playlist : ${playlists}">
+
+   <a th:href="@{/playlist/{id}(id=${playlist.id})}">
+
+    <h2 th:text="${playlist.name}"></h2>
+
+</a>
+
+    <p>
+
+        Songs :
+
+        <span th:text="${playlist.songs.size()}"></span>
+
+    </p>
+
+</div>
+
+</body>
+
+</html>
