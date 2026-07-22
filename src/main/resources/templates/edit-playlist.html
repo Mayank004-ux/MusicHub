@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Edit Playlist</title>
+
+    <link rel="stylesheet" th:href="@{/style.css}">
+
+</head>
+
+<body>
+
+<h1>✏ Edit Playlist</h1>
+
+<form th:action="@{/playlist/update/{id}(id=${playlist.id})}"
+      th:object="${playlist}"
+      method="post">
+
+    <label>Playlist Name</label>
+
+    <br><br>
+
+    <input type="text"
+           th:field="*{name}"
+           required>
+
+    <br><br>
+
+    <button class="add-btn"
+            type="submit">
+
+        💾 Save Changes
+
+    </button>
+
+</form>
+
+<br>
+
+<a href="/playlists">
+
+    <button>
+
+        ← Back
+
+    </button>
+
+</a>
+
+</body>
+
+</html>

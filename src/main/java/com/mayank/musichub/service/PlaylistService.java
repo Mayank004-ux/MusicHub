@@ -30,6 +30,14 @@ public class PlaylistService {
     public Playlist getPlaylistById(Long id) {
         return playlistRepository.findById(id).orElse(null);
     }
+    public Playlist updatePlaylist(Long id, Playlist updatedPlaylist) {
+
+    Playlist playlist = getPlaylistById(id);
+
+    playlist.setName(updatedPlaylist.getName());
+
+    return playlistRepository.save(playlist);
+}
 
     public void deletePlaylist(Long id) {
         playlistRepository.deleteById(id);
