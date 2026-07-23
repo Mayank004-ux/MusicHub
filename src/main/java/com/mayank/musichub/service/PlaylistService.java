@@ -63,4 +63,34 @@ public class PlaylistService {
     playlistRepository.save(playlist);
 
 }
+public void removeSongFromPlaylist(Long playlistId, Integer songId) {
+
+    Playlist playlist = playlistRepository.findById(playlistId)
+            .orElseThrow();
+
+    Song song = songRepository.findById(songId)
+            .orElseThrow();
+
+    playlist.getSongs().remove(song);
+
+    playlistRepository.save(playlist);
+
+}
+public void addSingleSongToPlaylist(Long playlistId, Integer songId) {
+
+    Playlist playlist = playlistRepository.findById(playlistId)
+            .orElseThrow();
+
+    Song song = songRepository.findById(songId)
+            .orElseThrow();
+
+    if (!playlist.getSongs().contains(song)) {
+
+        playlist.getSongs().add(song);
+
+        playlistRepository.save(playlist);
+
+    }
+
+}
 }

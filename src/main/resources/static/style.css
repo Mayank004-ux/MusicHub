@@ -733,3 +733,29 @@ button:hover{
 
     transform: scale(1.05);
 }
+.playlist-btn {
+
+    background-color: #6f42c1;
+
+    color: white;
+
+    border: none;
+
+    padding: 8px 15px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    margin-top: 10px;
+
+    transition: 0.3s;
+}
+
+.playlist-btn:hover {
+
+    background-color: #5a32a3;
+
+    transform: scale(1.05);
+
+}

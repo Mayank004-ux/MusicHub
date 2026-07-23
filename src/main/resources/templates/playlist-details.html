@@ -24,9 +24,41 @@
 <div class="song-card"
      th:each="song : ${playlist.songs}">
 
-    <h2 th:text="${song.title}"></h2>
+   <h2 th:text="${song.title}"></h2>
 
-    <p th:text="${song.artist}"></p>
+<p>
+    👤 <strong>Artist:</strong>
+    <span th:text="${song.artist}"></span>
+</p>
+
+<p>
+    💿 <strong>Album:</strong>
+    <span th:text="${song.album}"></span>
+</p>
+
+<p th:if="${song.genre != null}">
+    🎼 <strong>Genre:</strong>
+    <span th:text="${song.genre}"></span>
+</p>
+
+<p th:if="${song.rating != null}">
+    ⭐ <strong>Rating:</strong>
+    <span th:text="${song.rating}"></span>
+    /5
+</p>
+
+    <form th:action="@{/playlist/{playlistId}/remove-song/{songId}
+        (playlistId=${playlist.id},songId=${song.id})}"
+          method="post">
+
+        <button class="delete-btn"
+                onclick="return confirm('Remove this song from playlist?')">
+
+            ❌ Remove
+
+        </button>
+
+    </form>
 
 </div>
 

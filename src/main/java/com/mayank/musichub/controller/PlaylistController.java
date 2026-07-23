@@ -78,6 +78,15 @@ public String addSongsToPlaylist(
 
     return "redirect:/playlist/" + id;
 }
+@PostMapping("/playlist/{playlistId}/remove-song/{songId}")
+public String removeSongFromPlaylist(
+        @PathVariable Long playlistId,
+        @PathVariable Integer songId) {
+
+    playlistService.removeSongFromPlaylist(playlistId, songId);
+
+    return "redirect:/playlist/" + playlistId;
+}
 @PostMapping("/playlist/delete/{id}")
 public String deletePlaylist(@PathVariable Long id) {
 
@@ -102,5 +111,25 @@ public String updatePlaylist(@PathVariable Long id,
     playlistService.updatePlaylist(id, playlist);
 
     return "redirect:/playlists";
+}
+@GetMapping("/song/{songId}/choose-playlist")
+public String choosePlaylist(@PathVariable Integer songId,
+                             Model model) {
+
+    model.addAttribute("songId", songId);
+
+    model.addAttribute("playlists",
+            playlistService.getAllPlaylists());
+
+    return "choose-playlist";
+}
+@PostMapping("/playlist/{playlistId}/add-song/{songId}")
+public String addSingleSongToPlaylist(
+        @PathVariable Long playlistId,
+        @PathVariable Integer songId) {
+
+    playlistService.addSingleSongToPlaylist(playlistId, songId);
+
+    return "redirect:/playlist/" + playlistId;
 }
 }

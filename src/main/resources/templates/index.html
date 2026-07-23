@@ -88,7 +88,7 @@ Your Personal Music Library
     <a href="/favorites" class="favorite-page-btn">
         ❤️ Favorite Songs
     </a>
-
+    
     <a href="/playlists" class="playlist-page-btn">
         🎵 My Playlists
     </a>
@@ -260,6 +260,11 @@ th:text="${song.language}">
        <a th:href="@{/song/edit/{id}(id=${song.id})}">
     <button class="edit-btn">
         Edit
+    </button>
+</a>
+<a th:href="@{/song/{id}/choose-playlist(id=${song.id})}">
+    <button class="playlist-btn">
+        ➕ Playlist
     </button>
 </a>
 
