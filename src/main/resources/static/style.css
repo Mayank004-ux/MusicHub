@@ -2,7 +2,7 @@ body{
 
     margin:0;
 
-    padding:30px;
+    padding:80px;
 
     font-family:Arial, Helvetica, sans-serif;
 
@@ -757,5 +757,102 @@ button:hover{
     background-color: #5a32a3;
 
     transform: scale(1.05);
+
+}
+/* =========================
+   Navigation Bar
+========================= */
+
+.navbar {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: #1f1f1f;
+
+    padding: 15px 30px;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+
+    z-index: 1000;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+
+    box-sizing: border-box;
+}
+
+.logo {
+
+    color: #1DB954;
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+    text-decoration: none;
+
+}
+
+.nav-links {
+
+    display: flex;
+
+    gap: 20px;
+
+}
+
+.nav-links a {
+
+    color: white;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    transition: 0.3s;
+
+}
+
+.nav-links a:hover {
+
+    color: #1DB954;
+
+}
+.logo:hover {
+
+    transform: scale(1.05);
+
+    transition: 0.3s;
+
+}
+
+.nav-links a {
+
+    padding: 8px 14px;
+
+    border-radius: 8px;
+
+}
+
+.nav-links a:hover {
+
+    background-color: #1DB954;
+
+    color: black;
+
+}
+.page-container {
+
+    max-width: 1200px;
+
+    margin: auto;
+
+    padding: 25px;
 
 }

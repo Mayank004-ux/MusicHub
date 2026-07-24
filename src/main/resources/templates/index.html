@@ -2,31 +2,24 @@
 <html>
 <head>
     <title>MusicHub</title>
-    <p class="subtitle">
+    
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<p class="subtitle">
 
 Your Personal Music Library
 
 </p>
-    <link rel="stylesheet" th:href="@{/style.css}">
-</head>
-
 <body>
-    <div class="navbar">
 
-    <div class="logo">
-        🎵 MusicHub
-    </div>
+    <div th:replace="~{navbar :: navbar}"></div>
+    
+    <div class="page-container">
+    <!-- Hero Section -->
 
-    <div class="nav-links">
+    <!-- Search -->
 
-        <a href="/">Home</a>
-
-        <a href="/favorites">Favorites</a>
-
-        <a href="/sort">Sort</a>
-
-        <a href="/song/add">Add Song</a>
-
+    <!-- Song Cards -->
     </div>
 
 </div>

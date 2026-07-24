@@ -12,6 +12,8 @@
 
 <body>
 
+<div th:replace="~{navbar :: navbar}"></div>
+
 <h1>Edit Song</h1>
 
 <form th:action="@{/song/update/{id}(id=${song.id})}"

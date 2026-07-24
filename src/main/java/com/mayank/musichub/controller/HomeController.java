@@ -207,5 +207,11 @@ public String topRatedSongs(Model model) {
 
     return "top-rated";
 }
+@GetMapping("/add-song")
+public String addSongForm(Model model) {
 
+    model.addAttribute("song", new Song());
+
+    return "add-song";
+}
 }
