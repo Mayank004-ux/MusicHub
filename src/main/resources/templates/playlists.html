@@ -12,6 +12,26 @@
 
 <h1>🎵 My Playlists</h1>
 
+<div th:if="${success == 'created'}"
+     class="success-message">
+
+    ✅ Playlist created successfully!
+
+</div>
+
+<div th:if="${success == 'updated'}"
+     class="success-message">
+
+    ✏️ Playlist renamed successfully!
+
+</div>
+
+<div th:if="${success == 'deleted'}"
+     class="success-message">
+
+    🗑️ Playlist deleted successfully!
+
+</div>
 <br>
 
 <a href="/playlist/add">
@@ -20,6 +40,7 @@
     </button>
 </a>
 <br><br>
+
 
 <a href="/">
 
@@ -32,8 +53,25 @@
 </a>
 <hr>
 
-<div th:if="${#lists.isEmpty(playlists)}">
-    <h3>No playlists created yet.</h3>
+<div th:if="${#lists.isEmpty(playlists)}"
+     class="empty-state">
+
+    <h2>🎵 No Playlists Yet</h2>
+
+    <p>
+        Create your first playlist and start organizing your favorite songs.
+    </p>
+
+    <a href="/playlist/add">
+
+        <button class="add-btn">
+
+            ➕ Create Playlist
+
+        </button>
+
+    </a>
+
 </div>
 
 <div class="song-card"

@@ -10,18 +10,32 @@
         <a href="/" class="logo">
             🎵 MusicHub
         </a>
+<div class="nav-links">
 
-        <div class="nav-links">
+    <a th:href="@{/}"
+       th:classappend="${activePage == 'home'} ? 'active-nav' : ''">
+        🏠 Home
+    </a>
 
-    <a href="/">🏠 Home</a>
+    <a th:href="@{/playlists}"
+       th:classappend="${activePage == 'playlists'} ? 'active-nav' : ''">
+        🎵 Playlists
+    </a>
 
-    <a href="/playlists">🎵 Playlists</a>
+    <a th:href="@{/top-rated}"
+       th:classappend="${activePage == 'top-rated'} ? 'active-nav' : ''">
+        ⭐ Top Rated
+    </a>
 
-    <a href="/top-rated">⭐ Top Rated</a>
+    <a th:href="@{/favorites}"
+       th:classappend="${activePage == 'favorites'} ? 'active-nav' : ''">
+        ❤️ Favorites
+    </a>
 
-    <a href="/favorites">❤️ Favorites</a>
-
-    <a href="/add-song">➕ Add Song</a>
+    <a th:href="@{/add-song}"
+       th:classappend="${activePage == 'add-song'} ? 'active-nav' : ''">
+        ➕ Add Song
+    </a>
 
 </div>
 

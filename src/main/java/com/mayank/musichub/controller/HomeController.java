@@ -48,6 +48,8 @@ public String home(
 
     model.addAttribute("averageRating", songService.getAverageRating());
 
+    model.addAttribute("activePage", "home");
+
     return "index";
 }
     @GetMapping("/song/{id}")
@@ -205,12 +207,16 @@ public String topRatedSongs(Model model) {
 
     model.addAttribute("songs", songService.getTopRatedSongs());
 
+    model.addAttribute("activePage", "top-rated");
+
     return "top-rated";
 }
 @GetMapping("/add-song")
 public String addSongForm(Model model) {
 
     model.addAttribute("song", new Song());
+
+    model.addAttribute("activePage", "add-song");
 
     return "add-song";
 }

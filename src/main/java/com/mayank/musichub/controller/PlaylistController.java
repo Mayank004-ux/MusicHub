@@ -19,14 +19,22 @@ public class PlaylistController {
     @Autowired
     private SongService songService;
 
-    @GetMapping("/playlists")
-    public String playlists(Model model) {
+   @GetMapping("/playlists")
+public String playlists(
 
-        model.addAttribute("playlists",
-                playlistService.getAllPlaylists());
+        @RequestParam(required = false) String success,
 
-        return "playlists";
-    }
+        Model model) {
+
+    model.addAttribute("playlists",
+            playlistService.getAllPlaylists());
+
+    model.addAttribute("activePage", "playlists");
+
+    model.addAttribute("success", success);
+
+    return "playlists";
+}
 
     @GetMapping("/playlist/add")
     public String addPlaylistForm(Model model) {
@@ -42,7 +50,7 @@ public class PlaylistController {
 
         playlistService.savePlaylist(playlist);
 
-        return "redirect:/playlists";
+        return "redirect:/playlists?success=created";
     }
 @GetMapping("/playlist/{id}")
 public String viewPlaylist(@PathVariable Long id,
@@ -92,7 +100,7 @@ public String deletePlaylist(@PathVariable Long id) {
 
     playlistService.deletePlaylist(id);
 
-    return "redirect:/playlists";
+    return "redirect:/playlists?success=deleted";
 }
 @GetMapping("/playlist/edit/{id}")
 public String editPlaylist(@PathVariable Long id,
@@ -110,7 +118,7 @@ public String updatePlaylist(@PathVariable Long id,
 
     playlistService.updatePlaylist(id, playlist);
 
-    return "redirect:/playlists";
+    return  "redirect:/playlists?success=updated";
 }
 @GetMapping("/song/{songId}/choose-playlist")
 public String choosePlaylist(@PathVariable Integer songId,
