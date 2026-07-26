@@ -8,7 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
-import jakarta.persistence.Column;
+
 
 @Entity
 public class Song {
@@ -39,10 +39,13 @@ public class Song {
 
     private String youtubeUrl;
 
+    
+    @Column(columnDefinition = "TEXT")
     private String spotifyUrl;
 
     private Boolean favorite = false;
-
+    
+    
     @Column(columnDefinition = "TEXT")
 private String lyrics;
 

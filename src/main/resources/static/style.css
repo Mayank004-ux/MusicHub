@@ -40,6 +40,8 @@ hr{
 
 .song-card{
 
+    margin-top:25px;
+
     width:320px;
 
     background:white;
@@ -328,9 +330,9 @@ button:hover{
 }
 .lyrics-box{
 
-    background:#f5f5f5;
+    background:#fafafa;
 
-    border-radius:10px;
+    border-radius:12px;
 
     padding:20px;
 
@@ -338,25 +340,24 @@ button:hover{
 
     border:1px solid #ddd;
 
+    max-height:250px;
+
+    overflow-y:auto;
+
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+
 }
 
-.lyrics-box pre{
+.lyrics-text{
 
     white-space:pre-wrap;
 
-    font-family:inherit;
+    line-height:1.8;
 
     font-size:16px;
 
-    line-height:1.6;
+    color:#444;
 
-    margin:0;
-
-}
-.lyrics-text{
-    white-space: pre-wrap;
-    line-height: 1.8;
-    font-size: 16px;
 }
 .spotify-btn{
 
@@ -913,5 +914,164 @@ button:hover{
     margin-bottom: 25px;
 
     font-size: 18px;
+
+}
+.action-buttons {
+
+    display: flex;
+
+    gap: 15px;
+
+    margin-top: 25px;
+
+    flex-wrap: wrap;
+
+}
+
+.back-btn {
+
+    background: #555;
+
+    color: white;
+
+    border: none;
+
+    padding: 10px 18px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+.back-btn:hover {
+
+    background: #333;
+
+}
+.song-details-container{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:center;
+
+    gap:40px;
+
+    flex-wrap:wrap;
+
+    margin-top:30px;
+
+}
+
+.song-info-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:15px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,0.15);
+
+    width:500px;
+
+}
+
+.details-image{
+
+    width:300px;
+
+    height:300px;
+
+    object-fit:cover;
+
+    border-radius:15px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,0.25);
+
+}
+.song-info-grid{
+
+    margin-top:25px;
+
+}
+
+.info-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #e5e5e5;
+
+}
+
+.info-label{
+
+    font-weight:bold;
+
+    color:#444;
+
+}
+.section-title{
+
+    color:#1DB954;
+
+    margin-top:30px;
+
+    margin-bottom:15px;
+
+}
+.action-buttons{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+    margin-top:30px;
+
+}
+
+.youtube-btn,
+.spotify-btn,
+.back-btn{
+
+    width:100%;
+
+    padding:12px;
+
+    font-size:16px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:0.3s;
+
+}
+
+.back-btn{
+
+    background:#444;
+
+    color:white;
+
+}
+
+.back-btn:hover{
+
+    background:#222;
 
 }

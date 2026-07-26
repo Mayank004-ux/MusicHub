@@ -16,56 +16,57 @@
 
 <h1>🎵 Song Details</h1>
 
+<div class="song-details-container">
+
 <img
     th:src="${song.imageUrl}"
     class="details-image"
     alt="Album Cover">
 
-<div class="song-card">
+<div class="song-info-card">
 
     <h2 th:text="${song.title}"></h2>
 
-    <p>
-        <b>Artist:</b>
+   <div class="song-info-grid">
+
+    <div class="info-row">
+        <span class="info-label">👤 Artist</span>
         <span th:text="${song.artist}"></span>
-    </p>
+    </div>
 
-    <p>
-        <b>Album:</b>
+    <div class="info-row">
+        <span class="info-label">💿 Album</span>
         <span th:text="${song.album}"></span>
-    </p>
-    <p>
-         <b>Genre:<b>
-<span th:text="${song.genre}"></span>
-</p>
-<p>
+    </div>
 
-Language :
+    <div class="info-row">
+        <span class="info-label">🎼 Genre</span>
+        <span th:text="${song.genre}"></span>
+    </div>
 
-<span
-th:text="${song.language}">
+    <div class="info-row">
+        <span class="info-label">🌍 Language</span>
+        <span th:text="${song.language}"></span>
+    </div>
 
-</span>
+    <div class="info-row">
+        <span class="info-label">⏱ Duration</span>
+        <span th:text="${song.duration}"></span>
+    </div>
 
-</p>
-<p>
+    <div class="info-row">
+        <span class="info-label">📅 Release Year</span>
+        <span th:text="${song.releaseYear}"></span>
+    </div>
 
-<strong>Duration :</strong>
+    <div class="info-row">
+        <span class="info-label">⭐ Rating</span>
+        <span>
+            <span th:text="${song.rating}"></span>/5
+        </span>
+    </div>
 
-⏱ <span th:text="${song.duration}"></span>
-
-</p>
-<p>
-    <strong>Release Year:</strong>
-    <span th:text="${song.releaseYear}"></span>
-</p>
-<p>
-
-<strong>Rating :</strong>
-
-⭐ <span th:text="${song.rating}"></span>/5
-
-</p>
+</div>
 <p th:if="${song.favorite}">
     <strong>Status:</strong> ❤️ Favorite
 </p>
@@ -73,48 +74,38 @@ th:text="${song.language}">
 <p th:unless="${song.favorite}">
     <strong>Status:</strong> 🤍 Not Favorite
 </p>
-<h3>📝 Lyrics</h3>
+<h3 class="section-title">📝 Lyrics</h3>
 
 <div class="lyrics-box">
 
-    <div th:text="${song.lyrics}" class="lyrics-text"></div>
+    <p th:text="${song.lyrics}"
+       class="lyrics-text">
+    </p>
 
 </div>
-<div style="margin-top:20px;">
+<div class="action-buttons">
 
-    <a th:href="${song.youtubeUrl}"
-       target="_blank"
-       th:if="${song.youtubeUrl != null and !#strings.isEmpty(song.youtubeUrl)}">
-
-        <button class="youtube-btn">
-
-            ▶ Watch on YouTube
-
-        </button>
-
+    <a th:if="${song.youtubeUrl != null and !#strings.isEmpty(song.youtubeUrl)}"
+       th:href="${song.youtubeUrl}"
+       target="_blank">
+        <button class="youtube-btn">▶ Watch on YouTube</button>
     </a>
 
-</div>
-<div style="margin-top:15px;">
-
-    <a th:href="${song.spotifyUrl}"
-       target="_blank"
-       th:if="${song.spotifyUrl != null and !#strings.isEmpty(song.spotifyUrl)}">
-
-        <button class="spotify-btn">
-
-            🎵 Listen on Spotify
-
-        </button>
-
+    <a th:if="${song.spotifyUrl != null and !#strings.isEmpty(song.spotifyUrl)}"
+       th:href="${song.spotifyUrl}"
+       target="_blank">
+        <button class="spotify-btn">🎵 Listen on Spotify</button>
     </a>
-
-</div>
-    <br>
 
     <a href="/">
-        ⬅ Back to Home
+        <button class="back-btn">⬅ Back to Home</button>
     </a>
+
+</div>
+
+</div>
+
+</div>
 
 </div>
 
