@@ -12,6 +12,37 @@
 
 <h1>🎵 My Playlists</h1>
 
+<form th:action="@{/playlist/search}" method="get">
+
+    <input
+        type="text"
+        name="keyword"
+        placeholder="🔍 Search playlists...">
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>
+<a href="/playlist/sort/asc">
+
+    <button>
+        ⬆ Sort A-Z
+    </button>
+
+</a>
+
+<a href="/playlist/sort/desc">
+
+    <button>
+        ⬇ Sort Z-A
+    </button>
+
+</a>
+
+<br><br>
+<br>
+
 <div th:if="${success == 'created'}"
      class="success-message">
 
@@ -79,12 +110,36 @@
 
     <a th:href="@{/playlist/{id}(id=${playlist.id})}">
         <h2 th:text="${playlist.name}"></h2>
+
+        <p>
+
+    🎶
+    <span th:text="${playlist.songs.size()}"></span>
+    Songs
+
+</p>
     </a>
 
     <p>
         🎵 Songs :
         <span th:text="${playlist.songs.size()}"></span>
     </p>
+
+    <p>
+
+    ⭐ Average Rating:
+
+    <span th:text="${#numbers.formatDecimal(playlist.averageRating,1,1)}"></span>
+
+</p>
+
+    <p>
+
+    ⏱ Total Duration:
+
+    <span th:text="${playlist.totalDuration}"></span>
+
+</p>
 
     <div class="button-group">
 

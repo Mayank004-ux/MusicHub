@@ -140,4 +140,42 @@ public String addSingleSongToPlaylist(
 
     return "redirect:/playlist/" + playlistId;
 }
+@GetMapping("/playlist/search")
+public String searchPlaylists(@RequestParam String keyword,
+                              Model model) {
+
+    if (keyword == null || keyword.trim().isEmpty()) {
+
+        return "redirect:/playlists";
+
+    }
+
+    model.addAttribute(
+            "playlists",
+            playlistService.searchPlaylists(keyword));
+
+    return "playlists";
+
+}
+@GetMapping("/playlist/sort/asc")
+public String sortAscending(Model model) {
+
+    model.addAttribute(
+            "playlists",
+            playlistService.sortAscending());
+
+    return "playlists";
+
+}
+
+@GetMapping("/playlist/sort/desc")
+public String sortDescending(Model model) {
+
+    model.addAttribute(
+            "playlists",
+            playlistService.sortDescending());
+
+    return "playlists";
+
+}
 }

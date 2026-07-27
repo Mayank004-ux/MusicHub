@@ -22,6 +22,11 @@ public class PlaylistService {
     public List<Playlist> getAllPlaylists() {
         return playlistRepository.findAll();
     }
+    public List<Playlist> searchPlaylists(String keyword) {
+
+    return playlistRepository.findByNameContainingIgnoreCase(keyword);
+
+}
 
     public Playlist savePlaylist(Playlist playlist) {
         return playlistRepository.save(playlist);
@@ -91,6 +96,17 @@ public void addSingleSongToPlaylist(Long playlistId, Integer songId) {
         playlistRepository.save(playlist);
 
     }
+
+}
+public List<Playlist> sortAscending() {
+
+    return playlistRepository.findAllByOrderByNameAsc();
+
+}
+
+public List<Playlist> sortDescending() {
+
+    return playlistRepository.findAllByOrderByNameDesc();
 
 }
 }
