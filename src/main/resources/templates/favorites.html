@@ -15,6 +15,48 @@ Your Personal Music Library
     <div th:replace="~{navbar :: navbar}"></div>
 
     <h1>❤️ Favorite Songs</h1>
+     
+    <h2>
+
+❤️ Favorite Songs :
+<span th:text="${favoriteCount}"></span>
+
+</h2>
+<h2>
+
+⭐ Average Rating :
+
+<span
+th:text="${#numbers.formatDecimal(averageRating,1,1)}">
+</span>
+
+</h2>
+<h2>
+
+⏱ Total Duration :
+
+<span
+th:text="${favoriteDuration}">
+</span>
+
+</h2>
+
+<h2>🌍 Languages</h2>
+
+<ul>
+
+    <li
+        th:each="entry : ${languageStats}">
+
+        <span th:text="${entry.key}"></span>
+
+        :
+
+        <span th:text="${entry.value}"></span>
+
+    </li>
+
+</ul>
 
     <a href="/" class="back-btn">⬅ Back to Home</a>
 

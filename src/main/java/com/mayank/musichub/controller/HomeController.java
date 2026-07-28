@@ -107,6 +107,10 @@ public String saveSong(@ModelAttribute Song song){
 public String showFavoriteSongs(Model model) {
 
     model.addAttribute("songs", songService.getFavoriteSongs());
+   model.addAttribute( "favoriteCount", songService.getFavoriteSongCount());
+   model.addAttribute( "averageRating", songService.getFavoriteAverageRating());
+   model.addAttribute("favoriteDuration",songService.getFavoriteTotalDuration());
+   model.addAttribute("languageStats",songService.getFavoriteLanguageStats());
 
     return "favorites";
 

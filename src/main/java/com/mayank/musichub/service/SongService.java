@@ -8,7 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @Service
 public class SongService {
@@ -150,6 +153,89 @@ public Double getAverageRating() {
     }
 
     return Math.round(average * 10.0) / 10.0;
+
+}
+public int getFavoriteSongCount() {
+
+    return songRepository.findByFavoriteTrue().size();
+
+}
+public double getFavoriteAverageRating() {
+
+    List<Song> favorites = songRepository.findByFavoriteTrue();
+
+    if (favorites.isEmpty()) {
+        return 0;
+    }
+
+    double total = 0;
+    int count = 0;
+
+    for (Song song : favorites) {
+
+        if (song.getRating() != null) {
+
+            total += song.getRating();
+            count++;
+
+        }
+
+    }
+
+    if (count == 0) {
+        return 0;
+    }
+
+    return total / count;
+
+}
+public String getFavoriteTotalDuration() {
+
+    List<Song> favorites = songRepository.findByFavoriteTrue();
+
+    int totalSeconds = 0;
+
+    for (Song song : favorites) {
+
+        if (song.getDuration() != null &&
+                song.getDuration().contains(":")) {
+
+            String[] parts = song.getDuration().split(":");
+
+            totalSeconds += Integer.parseInt(parts[0]) * 60;
+            totalSeconds += Integer.parseInt(parts[1]);
+
+        }
+
+    }
+
+    int minutes = totalSeconds / 60;
+    int seconds = totalSeconds % 60;
+
+    return minutes + " min " + seconds + " sec";
+
+}
+public Map<String, Integer> getFavoriteLanguageStats() {
+
+    List<Song> favorites = songRepository.findByFavoriteTrue();
+
+    Map<String, Integer> stats = new HashMap<>();
+
+    for (Song song : favorites) {
+
+        if (song.getLanguage() != null &&
+            !song.getLanguage().isBlank()) {
+
+            stats.put(
+                song.getLanguage(),
+                stats.getOrDefault(song.getLanguage(), 0) + 1
+            );
+
+        }
+
+    }
+
+    return stats;
 
 }
 }
