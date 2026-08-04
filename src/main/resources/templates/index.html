@@ -31,6 +31,8 @@ Your Personal Music Library
     <p class="hero-text">
         Discover • Organize • Enjoy Your Favorite Music
     </p>
+    
+  
 
     <p class="hero-subtitle">
         Manage your personal music collection with genres,
@@ -184,6 +186,39 @@ Your Personal Music Library
 
     <hr>
 
+    <h2>🆕 Recently Added Songs</h2>
+
+<div class="recent-song-container">
+
+    <div class="song-card"
+         th:each="song : ${recentSongs}">
+
+        <img th:src="${song.imageUrl}"
+             class="album-cover"
+             alt="Album Cover">
+
+        <h3 th:text="${song.title}"></h3>
+
+        <p>
+            👤 <span th:text="${song.artist}"></span>
+        </p>
+
+        <a th:href="@{/song/{id}(id=${song.id})}">
+
+            <button class="details-btn">
+
+                Details
+
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+
+<hr>
+
   <div class="song-card" th:each="song : ${songs}">
 
     <img th:src="${song.imageUrl}"
@@ -199,7 +234,19 @@ Your Personal Music Library
     <!-- Buttons -->
 
 </div>
-    <h2 class="song-title" th:text="${song.title}"></h2>
+    <h2 class="song-title">
+
+    <span th:text="${song.title}"></span>
+
+    <span
+        th:if="${recentSongs.contains(song)}"
+        class="new-badge">
+
+        🆕 NEW
+
+    </span>
+
+</h2>
 
     <p>
         👤 <span class="song-artist" th:text="${song.artist}"></span>

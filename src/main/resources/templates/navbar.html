@@ -27,6 +27,11 @@
         ⭐ Top Rated
     </a>
 
+    <a th:href="@{/analytics}"
+   th:classappend="${activePage == 'analytics'} ? 'active-nav' : ''">
+    📊 Analytics
+</a>
+
     <a th:href="@{/favorites}"
        th:classappend="${activePage == 'favorites'} ? 'active-nav' : ''">
         ❤️ Favorites

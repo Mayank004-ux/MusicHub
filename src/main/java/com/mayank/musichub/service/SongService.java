@@ -186,7 +186,7 @@ public double getFavoriteAverageRating() {
         return 0;
     }
 
-    return total / count;
+    return Math.round((total / count) * 100.0) / 100.0;
 
 }
 public String getFavoriteTotalDuration() {
@@ -236,6 +236,16 @@ public Map<String, Integer> getFavoriteLanguageStats() {
     }
 
     return stats;
+
+}
+public int getTotalSongCount() {
+
+    return songRepository.findAll().size();
+
+}
+public List<Song> getRecentSongs() {
+
+    return songRepository.findTop5ByOrderByIdDesc();
 
 }
 }

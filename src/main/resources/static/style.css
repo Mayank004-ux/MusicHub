@@ -1098,3 +1098,99 @@ button:hover{
     box-shadow:0 8px 20px rgba(0,0,0,0.2);
 
 }
+.dashboard-card{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    text-align:center;
+
+    margin-bottom:30px;
+
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+
+}
+
+.dashboard-card h2{
+
+    color:#1DB954;
+
+}
+
+.dashboard-card h1{
+
+    font-size:42px;
+
+}
+.new-badge{
+
+    background:#1DB954;
+
+    color:white;
+
+    font-size:12px;
+
+    padding:4px 8px;
+
+    border-radius:20px;
+
+    margin-left:10px;
+
+}
+.analytics-container{
+
+    width:90%;
+
+    margin:auto;
+
+    text-align:center;
+
+    margin-top:40px;
+
+}
+
+.analytics-subtitle{
+
+    font-size:18px;
+
+    color:#666;
+
+}
+.recent-songs{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:30px;
+}
+.analytics-table{
+
+    width:60%;
+
+    margin:30px auto;
+
+    border-collapse:collapse;
+
+}
+
+.analytics-table th,
+.analytics-table td{
+
+    border:1px solid #ddd;
+
+    padding:12px;
+
+    text-align:center;
+
+}
+
+.analytics-table th{
+
+    background:#1DB954;
+
+    color:white;
+
+}

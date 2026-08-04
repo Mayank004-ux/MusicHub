@@ -50,6 +50,10 @@ public String home(
 
     model.addAttribute("activePage", "home");
 
+    model.addAttribute("totalSongs",songService.getTotalSongCount());
+
+    model.addAttribute( "recentSongs",songService.getRecentSongs());
+
     return "index";
 }
     @GetMapping("/song/{id}")
@@ -223,5 +227,33 @@ public String addSongForm(Model model) {
     model.addAttribute("activePage", "add-song");
 
     return "add-song";
+}
+@GetMapping("/analytics")
+public String analytics(Model model) {
+
+    model.addAttribute("activePage", "analytics");
+
+    model.addAttribute("totalSongs", songService.getTotalSongCount());
+
+    model.addAttribute("favoriteSongs", songService.getFavoriteSongCount());
+
+    model.addAttribute("totalArtists", songService.getTotalArtists());
+
+    model.addAttribute("totalGenres", songService.getTotalGenres());
+
+    model.addAttribute("totalAlbums", songService.getTotalAlbums());
+
+    model.addAttribute("averageRating", songService.getAverageRating());
+    
+    model.addAttribute("recentSongs", songService.getRecentSongs());
+
+    model.addAttribute("favoriteAverageRating", songService.getFavoriteAverageRating());
+
+model.addAttribute("favoriteDuration",songService.getFavoriteTotalDuration());
+
+model.addAttribute( "languageStats",songService.getFavoriteLanguageStats());
+
+    return "analytics";
+
 }
 }

@@ -31,6 +31,8 @@ List<Song> findAllByOrderByTitleAsc();
 
 List<Song> findAllByOrderByTitleDesc();
 
+List<Song> findTop5ByOrderByIdDesc();
+
 Page<Song> findAll(Pageable pageable);
 
 List<Song> findByRatingGreaterThanEqual(Integer rating);
