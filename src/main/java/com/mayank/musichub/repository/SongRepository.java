@@ -50,5 +50,23 @@ long countDistinctAlbums();
 
 @Query("SELECT AVG(s.rating) FROM Song s")
 Double getAverageRating();
+Song findTopByOrderByRatingDesc();
 
+Song findTopByOrderByReleaseYearDesc();
+
+@Query("""
+SELECT s.genre, COUNT(s)
+FROM Song s
+GROUP BY s.genre
+ORDER BY COUNT(s) DESC
+""")
+List<Object[]> getGenreStatistics();
+
+@Query("""
+SELECT s.artist, COUNT(s)
+FROM Song s
+GROUP BY s.artist
+ORDER BY COUNT(s) DESC
+""")
+List<Object[]> getArtistStatistics();
 }

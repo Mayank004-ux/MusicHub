@@ -253,6 +253,18 @@ model.addAttribute("favoriteDuration",songService.getFavoriteTotalDuration());
 
 model.addAttribute( "languageStats",songService.getFavoriteLanguageStats());
 
+model.addAttribute("genreStatistics",songService.getGenreStatistics());
+
+model.addAttribute( "artistStatistics",songService.getArtistStatistics());
+
+model.addAttribute( "highestRatedSong",songService.getHighestRatedSong());
+
+model.addAttribute("latestSong",songService.getLatestSong());
+
+model.addAttribute("favoritePercentage",String.format("%.1f",songService.getFavoritePercentage()));
+
+model.addAttribute("popularGenre",songService.getMostPopularGenre());
+
     return "analytics";
 
 }

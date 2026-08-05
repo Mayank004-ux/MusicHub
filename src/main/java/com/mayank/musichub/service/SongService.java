@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -247,5 +248,67 @@ public List<Song> getRecentSongs() {
 
     return songRepository.findTop5ByOrderByIdDesc();
 
+}
+public Map<String, Long> getGenreStatistics() {
+
+    List<Object[]> results = songRepository.getGenreStatistics();
+
+    Map<String, Long> stats = new LinkedHashMap<>();
+
+    for (Object[] row : results) {
+
+        stats.put(
+                (String) row[0],
+                (Long) row[1]
+        );
+
+    }
+
+    return stats;
+}
+public Map<String, Long> getArtistStatistics() {
+
+    List<Object[]> results = songRepository.getArtistStatistics();
+
+    Map<String, Long> stats = new LinkedHashMap<>();
+
+    for (Object[] row : results) {
+
+        stats.put(
+                (String) row[0],
+                (Long) row[1]
+        );
+
+    }
+
+    return stats;
+}
+public Song getHighestRatedSong() {
+    return songRepository.findTopByOrderByRatingDesc();
+}
+
+public Song getLatestSong() {
+    return songRepository.findTopByOrderByReleaseYearDesc();
+}
+
+public double getFavoritePercentage() {
+
+    long total = songRepository.count();
+
+    if(total == 0){
+        return 0;
+    }
+
+    return (songRepository.countByFavoriteTrue() * 100.0) / total;
+}
+public String getMostPopularGenre() {
+
+    Map<String, Long> genres = getGenreStatistics();
+
+    if(genres.isEmpty()){
+        return "N/A";
+    }
+
+    return genres.keySet().iterator().next();
 }
 }

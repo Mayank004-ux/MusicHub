@@ -9,8 +9,6 @@
 
 </head>
 
-
-
 <body>
 
 <div th:replace="~{navbar :: navbar}"></div>
@@ -20,166 +18,292 @@
     <h1>📊 Music Analytics</h1>
 
     <p class="analytics-subtitle">
-
         View insights about your music collection.
-
     </p>
+    
+     <hr>
 
-    <br>
-
-    <a href="/">
-
-        <button class="home-btn">
-
-            🏠 Back to Home
-
-        </button>
-        </a>
-    <hr>
+<h2>✨ Quick Insights</h2>
 
 <div class="dashboard">
 
     <div class="dashboard-card">
-        <h2>🎵</h2>
-        <h3 th:text="${totalSongs}"></h3>
-        <p>Total Songs</p>
+
+        <h2>🏆</h2>
+
+        <h3 th:text="${highestRatedSong != null ? highestRatedSong.title : 'N/A'}"></h3>
+
+        <p>Highest Rated Song</p>
+
     </div>
 
     <div class="dashboard-card">
+
+        <h2>🆕</h2>
+
+        <h3 th:text="${latestSong != null ? latestSong.title : 'N/A'}"></h3>
+
+        <p>Latest Song</p>
+
+    </div>
+
+    <div class="dashboard-card">
+
         <h2>❤️</h2>
-        <h3 th:text="${favoriteSongs}"></h3>
-        <p>Favorites</p>
+
+        <h3 th:text="${favoritePercentage + '%'}"></h3>
+
+        <p>Favorite Percentage</p>
+
     </div>
 
     <div class="dashboard-card">
-        <h2>🎤</h2>
-       <h3 th:text="${totalArtists}"></h3>
-        <p>Artists</p>
-    </div>
 
-    <div class="dashboard-card">
         <h2>🎼</h2>
-       <h3 th:text="${totalGenres}"></h3>
-        <p>Genres</p>
-    </div>
 
-    <div class="dashboard-card">
-        <h2>💿</h2>
-        <h3 th:text="${totalAlbums}"></h3>
-        <p>Albums</p>
-    </div>
-    <div class="dashboard-card">
-    <h2>⭐</h2>
-    <h3 th:text="${averageRating}"></h3>
-    <p>Average Rating</p>
-</div>
+        <h3 th:text="${popularGenre}"></h3>
 
-</div>
-   
+        <p>Most Popular Genre</p>
+
+    </div>
 
 </div>
 
 <hr>
 
-<h2>🆕 Recently Added Songs</h2>
+    <br>
 
-<div class="recent-songs">
+    <a href="/">
+        <button class="home-btn">
+            🏠 Back to Home
+        </button>
+    </a>
 
-   <div class="song-card" th:each="song : ${recentSongs}">
+    <hr>
 
-    <img th:src="${song.imageUrl}"
-         class="album-cover"
-         alt="Album Cover">
+    <!-- Dashboard -->
 
-    <h3 th:text="${song.title}"></h3>
+    <div class="dashboard">
 
-    <p>
-        👤 <span th:text="${song.artist}"></span>
-    </p>
+        <div class="dashboard-card">
+            <h2>🎵</h2>
+            <h3 th:text="${totalSongs}"></h3>
+            <p>Total Songs</p>
+        </div>
 
-    <p>
-        💿 <span th:text="${song.album}"></span>
-    </p>
+        <div class="dashboard-card">
+            <h2>❤️</h2>
+            <h3 th:text="${favoriteSongs}"></h3>
+            <p>Favorites</p>
+        </div>
 
-    <a th:href="@{/song/{id}(id=${song.id})}">
-        <button class="details-btn">
-            Details
+        <div class="dashboard-card">
+            <h2>🎤</h2>
+            <h3 th:text="${totalArtists}"></h3>
+            <p>Artists</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>🎼</h2>
+            <h3 th:text="${totalGenres}"></h3>
+            <p>Genres</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>💿</h2>
+            <h3 th:text="${totalAlbums}"></h3>
+            <p>Albums</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>⭐</h2>
+            <h3 th:text="${averageRating}"></h3>
+            <p>Average Rating</p>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <!-- Recently Added Songs -->
+
+    <h2>🆕 Recently Added Songs</h2>
+
+    <div class="recent-songs">
+
+        <div class="song-card"
+             th:each="song : ${recentSongs}">
+
+            <img
+                    th:src="${song.imageUrl}"
+                    class="album-cover"
+                    alt="Album Cover">
+
+            <h3 th:text="${song.title}"></h3>
+
+            <p>
+                👤
+                <span th:text="${song.artist}"></span>
+            </p>
+
+            <p>
+                💿
+                <span th:text="${song.album}"></span>
+            </p>
+
+            <a th:href="@{/song/{id}(id=${song.id})}">
+                <button class="details-btn">
+                    Details
+                </button>
+            </a>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <!-- Favorite Statistics -->
+
+    <h2>❤️ Favorite Statistics</h2>
+
+    <div class="dashboard">
+
+        <div class="dashboard-card">
+
+            <h2>❤️</h2>
+
+            <h3 th:text="${favoriteSongs}"></h3>
+
+            <p>Total Favorites</p>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <h2>⭐</h2>
+
+            <h3 th:text="${favoriteAverageRating}"></h3>
+
+            <p>Average Rating</p>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <h2>⏱</h2>
+
+            <h3 th:text="${favoriteDuration}"></h3>
+
+            <p>Total Duration</p>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <!-- Language Statistics -->
+
+    <h2>🌍 Favorite Songs by Language</h2>
+
+    <div th:if="${languageStats.isEmpty()}">
+
+        <p>No favorite songs available.</p>
+
+    </div>
+
+    <table
+            th:unless="${languageStats.isEmpty()}"
+            class="analytics-table">
+
+        <tr>
+            <th>Language</th>
+            <th>Favorite Songs</th>
+        </tr>
+
+        <tr th:each="entry : ${languageStats}">
+
+            <td th:text="${entry.key}"></td>
+
+            <td th:text="${entry.value}"></td>
+
+        </tr>
+
+    </table>
+
+    <hr>
+
+    <!-- Genre Statistics -->
+
+    <h2>🎼 Songs by Genre</h2>
+
+    <div th:if="${genreStatistics.isEmpty()}">
+
+        <p>No songs available.</p>
+
+    </div>
+
+    <table
+            th:unless="${genreStatistics.isEmpty()}"
+            class="analytics-table">
+
+        <tr>
+            <th>Genre</th>
+            <th>Total Songs</th>
+        </tr>
+
+        <tr th:each="entry : ${genreStatistics}">
+
+            <td th:text="${entry.key}"></td>
+
+            <td th:text="${entry.value}"></td>
+
+        </tr>
+
+    </table>
+
+    <hr>
+
+    <!-- Artist Statistics -->
+
+    <h2>🎤 Songs by Artist</h2>
+
+    <div th:if="${artistStatistics.isEmpty()}">
+
+        <p>No artists available.</p>
+
+    </div>
+
+    <table
+            th:unless="${artistStatistics.isEmpty()}"
+            class="analytics-table">
+
+        <tr>
+            <th>Artist</th>
+            <th>Total Songs</th>
+        </tr>
+
+        <tr th:each="entry : ${artistStatistics}">
+
+            <td th:text="${entry.key}"></td>
+
+            <td th:text="${entry.value}"></td>
+
+        </tr>
+
+    </table>
+
+    <br><br>
+
+    <a href="/">
+        <button class="home-btn">
+            🏠 Back to Home
         </button>
     </a>
 
 </div>
 
-       
-<hr>
-
-<h2>❤️ Favorite Statistics</h2>
-
-<div class="dashboard">
-
-    <div class="dashboard-card">
-
-        <h2>❤️</h2>
-
-        <h3 th:text="${favoriteSongs}"></h3>
-
-        <p>Total Favorites</p>
-
-    </div>
-
-    <div class="dashboard-card">
-
-        <h2>⭐</h2>
-
-        <h3 th:text="${favoriteAverageRating}"></h3>
-
-        <p>Average Rating</p>
-
-    </div>
-
-    <div class="dashboard-card">
-
-        <h2>⏱</h2>
-
-        <h3 th:text="${favoriteDuration}"></h3>
-
-        <p>Total Duration</p>
-
-    </div>
-
-</div>
-<hr>
-
-<h2>🌍 Favorite Songs by Language</h2>
-
-<div th:if="${languageStats.isEmpty()}">
-
-    <p>No favorite songs available.</p>
-
-</div>
-
-<table
-th:unless="${languageStats.isEmpty()}"
-class="analytics-table">
-
-    <tr>
-
-        <th>Language</th>
-
-        <th>Favorite Songs</th>
-
-    </tr>
-
-    <tr th:each="entry : ${languageStats}">
-
-        <td th:text="${entry.key}"></td>
-
-        <td th:text="${entry.value}"></td>
-
-    </tr>
-
-</table>
 </body>
-
-
 
 </html>
