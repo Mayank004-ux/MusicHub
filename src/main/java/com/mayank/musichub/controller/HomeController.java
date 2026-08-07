@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestParam;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 
 
 @Controller
@@ -64,6 +66,8 @@ public String songDetails(@PathVariable Integer id,
 
     model.addAttribute("song", song);
 
+    model.addAttribute( "recommendedSongs",songService.getRecommendedSongs(id));
+
     return "song-details";
 }
 @GetMapping("/song/edit/{id}")
@@ -100,12 +104,20 @@ public String addSongPage(Model model){
 
 }
 @PostMapping("/song/save")
-public String saveSong(@ModelAttribute Song song){
+public String saveSong(@Valid @ModelAttribute("song") Song song,
+                       BindingResult result) {
+
+    System.out.println("===== saveSong() called =====");
+    System.out.println("Title = " + song.getTitle());
+
+    if (result.hasErrors()) {
+        System.out.println(result.getAllErrors());
+        return "add-song";
+    }
 
     songService.saveSong(song);
 
     return "redirect:/";
-
 }
 @GetMapping("/favorites")
 public String showFavoriteSongs(Model model) {

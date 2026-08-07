@@ -311,4 +311,18 @@ public String getMostPopularGenre() {
 
     return genres.keySet().iterator().next();
 }
+public List<Song> getRecommendedSongs(Integer id) {
+
+    Song song = getSongById(id);
+
+    if (song == null) {
+        return List.of();
+    }
+
+    return songRepository.findTop4ByGenreIgnoreCaseAndIdNot(
+            song.getGenre(),
+            id
+    );
+
+}
 }

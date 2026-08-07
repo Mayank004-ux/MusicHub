@@ -1194,3 +1194,18 @@ button:hover{
     color:white;
 
 }
+.error{
+    color:#e53935;
+    font-size:14px;
+    font-weight:600;
+    margin-top:5px;
+    margin-bottom:10px;
+}
+.footer{
+    margin-top:50px;
+    padding:20px;
+    text-align:center;
+    background:#1b1b1b;
+    color:white;
+    font-size:14px;
+}

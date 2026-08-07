@@ -4,7 +4,7 @@
 
 <head>
 
-    <title>Song Details</title>
+    <title>Song Details | MusicHub</title>
 
     <link rel="stylesheet" th:href="@{/style.css}">
 
@@ -106,6 +106,50 @@
 </div>
 
 </div>
+
+</div>
+
+<h2>🎵 You May Also Like</h2>
+
+<div th:if="${#lists.isEmpty(recommendedSongs)}">
+
+   <div class="empty-state">
+
+    <h3>🎵 No Recommendations Yet</h3>
+
+    <p>
+        Add more songs in this genre to get recommendations.
+    </p>
+
+</div>
+</div>
+
+<div class="recent-songs"
+     th:unless="${#lists.isEmpty(recommendedSongs)}">
+
+    <div class="song-card"
+         th:each="song : ${recommendedSongs}">
+
+        <img th:src="${song.imageUrl}"
+             class="album-cover">
+
+        <h3 th:text="${song.title}"></h3>
+
+        <p>
+            👤 <span th:text="${song.artist}"></span>
+        </p>
+
+        <p>
+            🎼 <span th:text="${song.genre}"></span>
+        </p>
+
+        <a th:href="@{/song/{id}(id=${song.id})}">
+            <button class="details-btn">
+                View Details
+            </button>
+        </a>
+
+    </div>
 
 </div>
 

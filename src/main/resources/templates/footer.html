@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div th:fragment="footer">
+
+    <footer class="footer">
+
+        <p>
+            © 2026 MusicHub • Built with Spring Boot & PostgreSQL
+        </p>
+
+    </footer>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+
+</body>
+
+</html>

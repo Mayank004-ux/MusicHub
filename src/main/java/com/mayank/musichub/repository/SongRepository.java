@@ -69,4 +69,7 @@ GROUP BY s.artist
 ORDER BY COUNT(s) DESC
 """)
 List<Object[]> getArtistStatistics();
+
+List<Song> findTop4ByGenreIgnoreCaseAndIdNot(String genre, Integer id);
+
 }

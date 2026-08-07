@@ -8,6 +8,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 
 @Entity
@@ -17,25 +22,35 @@ public class Song {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    @NotBlank(message = "Title cannot be empty")
-    private String title;
+    @NotBlank(message = "Title is required")
+@Size(max = 100, message = "Title must be under 100 characters")
+private String title;
     
-    @NotBlank(message = "Artist cannot be empty")
-    private String artist;
+    @NotBlank(message = "Artist is required")
+private String artist;
 
-    private String album;
+    @NotBlank(message = "Album is required")
+private String album;
 
     private String imageUrl;
 
-    private String genre;
+    @NotBlank(message = "Genre is required")
+private String genre;
 
-    private String language;
+   @NotBlank(message = "Language is required")
+private String language;
 
-    private Integer rating;
+   @NotNull(message = "Rating is required")
+@Min(value = 1, message = "Minimum rating is 1")
+@Max(value = 5, message = "Maximum rating is 5")
+private Integer rating;
 
     private String duration;
 
-    private Integer releaseYear;
+   @NotNull(message = "Release year is required")
+@Min(value = 1900, message = "Invalid year")
+@Max(value = 2100, message = "Invalid year")
+private Integer releaseYear;
 
     private String youtubeUrl;
 

@@ -3,7 +3,7 @@
 
 <head>
 
-    <title>Music Analytics</title>
+    <title>Analytics | MusicHub</title>
 
     <link rel="stylesheet" th:href="@{/style.css}">
 
@@ -129,7 +129,14 @@
 
     <h2>🆕 Recently Added Songs</h2>
 
-    <div class="recent-songs">
+    <div th:if="${#lists.isEmpty(recentSongs)}">
+
+    <p>No recently added songs.</p>
+
+</div>
+
+<div class="recent-songs"
+     th:unless="${#lists.isEmpty(recentSongs)}">
 
         <div class="song-card"
              th:each="song : ${recentSongs}">

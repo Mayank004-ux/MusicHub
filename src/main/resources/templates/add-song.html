@@ -4,7 +4,7 @@
 
 <head>
 
-    <title>Add Song</title>
+    <title>Add Song | MusicHub</title>
 
     <link rel="stylesheet" th:href="@{/style.css}">
 
@@ -28,6 +28,11 @@
 
        th:field="*{title}">
 
+       <p class="error"
+       th:if="${#fields.hasErrors('title')}"
+       th:errors="*{title}">
+       </p>
+
 <br><br>
 
 <label>Artist</label>
@@ -36,6 +41,11 @@
 
        th:field="*{artist}">
 
+       <p class="error"
+       th:if="${#fields.hasErrors('artist')}"
+       th:errors="*{artist}">
+      </p>
+
 <br><br>
 
 <label>Album</label>
@@ -43,6 +53,11 @@
 <input type="text"
 
        th:field="*{album}">
+
+       <p class="error"
+       th:if="${#fields.hasErrors('album')}"
+       th:errors="*{album}">
+       </p>
 
 <br><br>
 
@@ -53,6 +68,11 @@
 
     th:field="*{genre}">
 
+    <p class="error"
+   th:if="${#fields.hasErrors('genre')}"
+   th:errors="*{genre}">
+   </p>
+
 <br><br>    
 
      <label>Language</label>
@@ -61,6 +81,11 @@
 type="text"
 
 th:field="*{language}">
+
+<p class="error"
+   th:if="${#fields.hasErrors('language')}"
+   th:errors="*{language}">
+</p>
 
 <br><br>
 
@@ -71,6 +96,11 @@ th:field="*{language}">
     min="1"
     max="5"
     th:field="*{rating}">
+
+    <p class="error"
+   th:if="${#fields.hasErrors('rating')}"
+   th:errors="*{rating}">
+</p>
 
 <br><br>
 
@@ -89,6 +119,11 @@ th:field="*{language}">
     type="number"
     th:field="*{releaseYear}"
     placeholder="Example: 2017">
+
+    <p class="error"
+   th:if="${#fields.hasErrors('releaseYear')}"
+   th:errors="*{releaseYear}">
+</p>
 
 <br><br>
 <label>YouTube URL</label>

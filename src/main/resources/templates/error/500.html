@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Server Error | MusicHub</title>
+
+    <link rel="stylesheet" th:href="@{/style.css}">
+
+</head>
+
+<body>
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="empty-state">
+
+    <h1>500</h1>
+
+    <h2>⚠ Something Went Wrong</h2>
+
+    <p>
+
+        An unexpected error occurred.
+
+    </p>
+
+    <a href="/">
+
+        <button class="home-btn">
+
+            🏠 Back to Home
+
+        </button>
+
+    </a>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+
+</body>
+
+</html>
