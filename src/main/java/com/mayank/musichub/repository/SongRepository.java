@@ -72,4 +72,10 @@ List<Object[]> getArtistStatistics();
 
 List<Song> findTop4ByGenreIgnoreCaseAndIdNot(String genre, Integer id);
 
+Page<Song> findByTitleContainingIgnoreCaseOrArtistContainingIgnoreCaseOrAlbumContainingIgnoreCase(
+        String title,
+        String artist,
+         String album,
+        Pageable pageable
+);
 }

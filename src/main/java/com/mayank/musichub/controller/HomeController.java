@@ -26,16 +26,28 @@ public class HomeController {
 public String home(
 
         @RequestParam(defaultValue = "0") int page,
-
+         @RequestParam(required = false) String keyword,
         Model model) {
 
-    Page<Song> songPage = songService.getSongsByPage(page);
+    Page<Song> songPage;
+
+if (keyword != null && !keyword.trim().isEmpty()) {
+
+    songPage = songService.searchSongsByPage(keyword, page);
+
+} else {
+
+    songPage = songService.getSongsByPage(page);
+
+}
 
     model.addAttribute("songs", songPage.getContent());
 
     model.addAttribute("currentPage", page);
 
     model.addAttribute("totalPages", songPage.getTotalPages());
+
+    model.addAttribute("keyword", keyword);
 
     // Dashboard Statistics
     model.addAttribute("totalSongs", songService.getTotalSongs());

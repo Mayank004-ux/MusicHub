@@ -168,10 +168,20 @@ Your Personal Music Library
 
     <h3>Search Songs</h3>
 
+    <form action="/" method="get" class="search-form">
+
     <input
-    type="text"
-    id="searchInput"
-    placeholder="Search here...">
+        type="text"
+        name="keyword"
+        id="searchInput"
+        placeholder="Search songs..."
+        th:value="${keyword}">
+
+    <button type="submit" class="search-submit-btn">
+        🔍 Search
+    </button>
+
+</form>
     <br>
 
 <a href="/song/add">
@@ -219,7 +229,9 @@ Your Personal Music Library
 
 <hr>
 
-  <div class="song-card" th:each="song : ${songs}">
+ <div class="song-grid">
+
+    <div class="song-card" th:each="song : ${songs}">
 
     <img th:src="${song.imageUrl}"
      alt="Album Cover"
@@ -323,6 +335,9 @@ th:text="${song.language}">
 
     </div>
 
+     </div>
+
+
 </div>
 <div class="pagination">
 
@@ -348,33 +363,43 @@ const searchInput = document.getElementById("searchInput");
 
 searchInput.addEventListener("keyup", function () {
 
-    const keyword = searchInput.value.toLowerCase();
+    const keyword = searchInput.value
+        .trim()
+        .toLowerCase();
 
     const cards = document.querySelectorAll(".song-card");
 
-    cards.forEach(function(card){
+    cards.forEach(function (card) {
 
-        const title =
-        card.querySelector(".song-title").innerText.toLowerCase();
+        const titleElement =
+            card.querySelector(".song-title");
 
-        const artist =
-        card.querySelector(".song-artist").innerText.toLowerCase();
+        const artistElement =
+            card.querySelector(".song-artist");
 
-        const album =
-        card.querySelector(".song-album").innerText.toLowerCase();
+        const albumElement =
+            card.querySelector(".song-album");
 
-        if(title.includes(keyword)
-            || artist.includes(keyword)
-            || album.includes(keyword)){
+        const title = titleElement
+            ? titleElement.innerText.toLowerCase()
+            : "";
 
-            card.style.display="block";
+        const artist = artistElement
+            ? artistElement.innerText.toLowerCase()
+            : "";
 
-        }else{
+        const album = albumElement
+            ? albumElement.innerText.toLowerCase()
+            : "";
 
-            card.style.display="none";
+        const matches =
+            title.includes(keyword) ||
+            artist.includes(keyword) ||
+            album.includes(keyword);
 
-        }
-
+        card.style.display = matches
+            ? ""
+            : "none";
     });
 
 });
