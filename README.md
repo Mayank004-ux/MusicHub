@@ -104,46 +104,46 @@ musichub/
 └── mvnw
 
 ## 🛠️ Tech Stack
-# Backend
-Java
-Spring Boot
-Spring MVC
-Spring Data JPA
-Hibernate
-Lombok
-Maven
-# Database
-PostgreSQL
-pgAdmin
-# Frontend
-Thymeleaf
-HTML5
-CSS3
-JavaScript
-# Tools
-Visual Studio Code
-Postman
-Git
-GitHub
+- Backend
+ Java
+ Spring Boot
+ Spring MVC
+ Spring Data JPA
+ Hibernate
+ Lombok
+ Maven
+- Database
+ PostgreSQL
+ pgAdmin
+- Frontend
+ Thymeleaf
+ HTML5
+ CSS3
+ JavaScript
+- Tools
+ Visual Studio Code
+ Postman
+ Git
+ GitHub
 
 ## ⚙️ How to Run
 
-# 1. Clone the repository
+- 1. Clone the repository
 git clone https://github.com/Mayank004-ux/MusicHub
 cd musichub
 
-# 2. Create PostgreSQL database
+- 2. Create PostgreSQL database
 
 Create a database named: musichub
 cd musichub
 
-# 3. Configure application.properties
+- 3. Configure application.properties
 
 spring.datasource.url=jdbc:postgresql://localhost:5432/musichub
 spring.datasource.username=postgres
 spring.datasource.password=YOUR_PASSWORD
 
-# 4. Run the application
+- 4. Run the application
 mvn spring-boot:run
 Open: http://localhost:8080
 
