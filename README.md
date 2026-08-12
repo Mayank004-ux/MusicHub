@@ -624,7 +624,7 @@ However, production deployments should use:
 * HTTPS
 * Proper authentication and authorization
 
-Never commit passwords, API keys, tokens, or other secrets to GitHub.
+
 
 ---
 
@@ -674,4 +674,3 @@ https://github.com/Mayank004-ux/MusicHub
 
 ---
 
-This project is created for **educational, learning, and portfolio purposes**.
