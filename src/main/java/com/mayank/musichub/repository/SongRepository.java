@@ -3,6 +3,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
+
 import com.mayank.musichub.model.Song;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -78,4 +79,5 @@ Page<Song> findByTitleContainingIgnoreCaseOrArtistContainingIgnoreCaseOrAlbumCon
          String album,
         Pageable pageable
 );
+
 }

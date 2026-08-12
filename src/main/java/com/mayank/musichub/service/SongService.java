@@ -327,7 +327,7 @@ public List<Song> getRecommendedSongs(Integer id) {
 }
 public Page<Song> searchSongsByPage(String keyword, int page) {
 
-    Pageable pageable = PageRequest.of(page, 12);
+    Pageable pageable = PageRequest.of(page, 4);
 
     return songRepository
             .findByTitleContainingIgnoreCaseOrArtistContainingIgnoreCaseOrAlbumContainingIgnoreCase(
