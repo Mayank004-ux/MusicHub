@@ -1,81 +1,236 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-
-    <title>Playlist Details</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${playlist.name} + ' | MusicHub'">Playlist Details | MusicHub</title>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS with Stitch Design Tokens -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#53e076",
+                        "primary-container": "#1db954",
+                        "on-primary": "#003914",
+                        "on-primary-container": "#004118",
+                        "secondary": "#3de96f",
+                        "background": "#131313",
+                        "surface": "#131313",
+                        "surface-container": "#201f1f",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "on-surface-variant": "#bccbb9"
+                    }
+                }
+            }
+        };
+    </script>
     <link rel="stylesheet" th:href="@{/style.css}">
-
+    <style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+        .playlist-hero-gradient {
+            background: linear-gradient(135deg, rgba(29, 185, 84, 0.2) 0%, rgba(32, 31, 31, 0.95) 100%);
+        }
+    </style>
 </head>
+<body class="stitch-theme bg-background text-on-surface antialiased min-h-screen">
 
-<body>
+    <!-- Top Navigation Fragment -->
+    <div th:with="activePage='playlists'">
+        <div th:replace="~{navbar :: navbar}"></div>
+    </div>
 
-<div th:replace="~{navbar :: navbar}"></div>
+    <!-- Main Content Container -->
+    <main class="w-full min-h-screen pt-4 pb-28 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto flex flex-col space-y-6">
 
-<h1 th:text="${playlist.name}"></h1>
+        <!-- Top Breadcrumb & Actions -->
+        <div class="flex items-center justify-between text-xs text-on-surface-variant">
+            <a th:href="@{/playlists}" class="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                <span>Back to Playlists</span>
+            </a>
+            <div class="flex items-center gap-2">
+                <a th:href="@{/playlist/{id}/add-songs(id=${playlist.id})}"
+                   class="inline-flex items-center gap-1 text-primary hover:underline font-semibold">
+                    <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                    <span>Add Songs</span>
+                </a>
+            </div>
+        </div>
 
-<hr>
+        <!-- Playlist Showcase Hero Card -->
+        <section class="relative overflow-hidden rounded-2xl bg-surface-container p-6 sm:p-8 shadow-2xl border border-white/10 playlist-hero-gradient text-left">
+            <div class="absolute -top-10 -right-10 w-52 h-52 bg-primary/15 rounded-full blur-3xl pointer-events-none"></div>
 
-<div th:if="${#lists.isEmpty(playlist.songs)}">
+            <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                <div class="flex items-center gap-5">
+                    <!-- Artwork Icon -->
+                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_24px_rgba(29,185,84,0.4)] flex-shrink-0">
+                        <span class="material-symbols-outlined text-[44px]">queue_music</span>
+                    </div>
 
-    <h3>No songs in this playlist.</h3>
+                    <div class="min-w-0">
+                        <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary text-[11px] font-bold uppercase tracking-wider mb-2">
+                            <span>Playlist Collection</span>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight"
+                            th:text="${playlist.name}">
+                            Playlist Name
+                        </h1>
+                        <p class="text-xs sm:text-sm text-on-surface-variant mt-1.5">
+                            <span th:text="${playlist.songs != null ? playlist.songs.size() : 0}">0</span> tracks curated in this mix
+                        </p>
+                    </div>
+                </div>
 
-</div>
+                <!-- Primary Action Buttons -->
+                <div class="flex items-center gap-2.5 flex-shrink-0">
+                    <a th:href="@{/playlist/{id}/add-songs(id=${playlist.id})}"
+                       class="h-10 px-5 rounded-full bg-primary-container hover:bg-[#1ed760] text-[#003914] font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-[0_0_16px_rgba(29,185,84,0.35)] active:scale-95 transition-all">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        <span>Add Songs</span>
+                    </a>
+                    <a th:href="@{/playlist/edit/{id}(id=${playlist.id})}"
+                       class="h-10 px-4 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-white font-semibold text-xs flex items-center gap-1.5 border border-white/5 transition-all">
+                        <span class="material-symbols-outlined text-[16px]">edit</span>
+                        <span class="hidden sm:inline">Rename</span>
+                    </a>
+                </div>
+            </div>
+        </section>
 
-<div class="song-card"
-     th:each="song : ${playlist.songs}">
+        <!-- Songs Section -->
+        <section class="space-y-4 text-left">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-white tracking-tight">Tracks in Playlist</h2>
+                <span class="text-xs text-on-surface-variant font-medium"
+                      th:text="(${playlist.songs != null ? playlist.songs.size() : 0}) + ' items'">0 items</span>
+            </div>
 
-   <h2 th:text="${song.title}"></h2>
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(playlist.songs)}" 
+                 class="p-10 rounded-2xl bg-surface-container border border-white/5 text-center space-y-4">
+                <div class="w-14 h-14 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center mx-auto">
+                    <span class="material-symbols-outlined text-[32px]">music_off</span>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">No songs in this playlist yet</h3>
+                    <p class="text-xs text-on-surface-variant mt-1 max-w-sm mx-auto">
+                        Add tracks from your personal music library to build this collection.
+                    </p>
+                </div>
+                <a th:href="@{/playlist/{id}/add-songs(id=${playlist.id})}"
+                   class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary-container text-[#003914] font-bold text-xs shadow-[0_0_16px_rgba(29,185,84,0.35)] hover:bg-[#1ed760] transition-all">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    <span>Browse & Add Songs</span>
+                </a>
+            </div>
 
-<p>
-    👤 <strong>Artist:</strong>
-    <span th:text="${song.artist}"></span>
-</p>
+            <!-- Songs List -->
+            <div th:unless="${#lists.isEmpty(playlist.songs)}" class="flex flex-col space-y-2.5">
+                <article th:each="song, iterStat : ${playlist.songs}"
+                         class="flex items-center justify-between p-3 sm:p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-all border border-white/5 group">
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <!-- Index or Artwork -->
+                        <div class="w-11 h-11 rounded-lg overflow-hidden flex items-center justify-center bg-surface-container-high shrink-0 shadow-sm relative">
+                            <img th:if="${song.imageUrl != null and !#strings.isEmpty(song.imageUrl)}"
+                                 th:src="${song.imageUrl}"
+                                 alt="Cover"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                            <span th:class="${'material-symbols-outlined text-primary text-[20px]' + (song.imageUrl != null and !#strings.isEmpty(song.imageUrl) ? ' hidden' : '')}">music_note</span>
+                        </div>
 
-<p>
-    💿 <strong>Album:</strong>
-    <span th:text="${song.album}"></span>
-</p>
+                        <!-- Song Info -->
+                        <div class="min-w-0 text-left">
+                            <a th:href="@{/song/{id}(id=${song.id})}" class="block truncate">
+                                <h3 class="text-sm font-bold text-white hover:text-primary transition-colors truncate" 
+                                    style="color: #ffffff !important;"
+                                    th:text="${song.title}">
+                                    Song Title
+                                </h3>
+                            </a>
+                            <p class="text-xs text-on-surface-variant truncate mt-0.5">
+                                <span class="text-primary font-medium" th:text="${song.artist}">Artist</span>
+                                <span th:if="${song.album != null and !#strings.isEmpty(song.album)}"> &bull; <span th:text="${song.album}"></span></span>
+                            </p>
+                        </div>
+                    </div>
 
-<p th:if="${song.genre != null}">
-    🎼 <strong>Genre:</strong>
-    <span th:text="${song.genre}"></span>
-</p>
+                    <!-- Actions & Metadata -->
+                    <div class="flex items-center gap-3 shrink-0">
+                        <span th:if="${song.genre != null and !#strings.isEmpty(song.genre)}" 
+                              class="text-[11px] px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-medium border border-white/5 hidden sm:inline"
+                              th:text="${song.genre}">Genre</span>
 
-<p th:if="${song.rating != null}">
-    ⭐ <strong>Rating:</strong>
-    <span th:text="${song.rating}"></span>
-    /5
-</p>
+                        <div th:if="${song.rating != null}" class="flex items-center gap-0.5 text-amber-400 text-xs font-semibold">
+                            <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span th:text="${song.rating}">5</span>
+                        </div>
 
-    <form th:action="@{/playlist/{playlistId}/remove-song/{songId}
-        (playlistId=${playlist.id},songId=${song.id})}"
-          method="post">
+                        <!-- Song Details Link -->
+                        <a th:href="@{/song/{id}(id=${song.id})}"
+                           class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-white hover:bg-surface-container-highest transition-colors"
+                           title="Song Details">
+                            <span class="material-symbols-outlined text-[18px]">info</span>
+                        </a>
 
-        <button class="delete-btn"
-                onclick="return confirm('Remove this song from playlist?')">
+                        <!-- Remove from Playlist Form -->
+                        <form th:action="@{/playlist/{playlistId}/remove-song/{songId}(playlistId=${playlist.id},songId=${song.id})}"
+                              method="post"
+                              class="inline">
+                            <button type="submit"
+                                    onclick="return confirm('Remove this song from playlist?')"
+                                    aria-label="Remove song from playlist"
+                                    class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                                    title="Remove from playlist">
+                                <span class="material-symbols-outlined text-[18px]">close</span>
+                            </button>
+                        </form>
+                    </div>
+                </article>
+            </div>
+        </section>
 
-            ❌ Remove
+    </main>
 
-        </button>
-
-    </form>
-
-</div>
-
-<br>
-
-<a href="/playlists">
-
-    <button class="add-btn">
-
-        ← Back to Playlists
-
-    </button>
-
-</a>
+    <!-- Docked Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
+        <div class="h-16 px-4 flex items-center justify-between max-w-md mx-auto">
+            <a th:href="@{/}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">home</span>
+                <span class="text-[11px]">Home</span>
+            </a>
+            <a th:href="@{/playlists}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-primary font-bold transition-colors">
+                <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">queue_music</span>
+                <span class="text-[11px]">Playlists</span>
+            </a>
+            <div class="flex-1 flex items-center justify-center">
+                <a th:href="@{/song/add}" aria-label="Add Song" class="w-11 h-11 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(29,185,84,0.45)] hover:scale-105 active:scale-95 transition-transform" title="Add New Song">
+                    <span class="material-symbols-outlined text-[26px]">add</span>
+                </a>
+            </div>
+            <a th:href="@{/favorites}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">favorite</span>
+                <span class="text-[11px]">Favorites</span>
+            </a>
+            <a th:href="@{/analytics}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">insights</span>
+                <span class="text-[11px]">Analytics</span>
+            </a>
+        </div>
+    </nav>
 
 </body>
-
 </html>

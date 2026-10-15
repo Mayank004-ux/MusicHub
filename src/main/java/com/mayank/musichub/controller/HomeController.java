@@ -1,5 +1,6 @@
 package com.mayank.musichub.controller;
 
+import java.util.List;
 import com.mayank.musichub.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -132,16 +133,26 @@ public String saveSong(@Valid @ModelAttribute("song") Song song,
     return "redirect:/";
 }
 @GetMapping("/favorites")
-public String showFavoriteSongs(Model model) {
+public String showFavoriteSongs(
+        @RequestParam(required = false) String keyword,
+        Model model) {
 
-    model.addAttribute("songs", songService.getFavoriteSongs());
-   model.addAttribute( "favoriteCount", songService.getFavoriteSongCount());
-   model.addAttribute( "averageRating", songService.getFavoriteAverageRating());
-   model.addAttribute("favoriteDuration",songService.getFavoriteTotalDuration());
-   model.addAttribute("languageStats",songService.getFavoriteLanguageStats());
+    List<Song> songs;
+    if (keyword != null && !keyword.trim().isEmpty()) {
+        songs = songService.searchFavoriteSongs(keyword.trim());
+    } else {
+        songs = songService.getFavoriteSongs();
+    }
+
+    model.addAttribute("songs", songs);
+    model.addAttribute("keyword", keyword != null ? keyword.trim() : null);
+    model.addAttribute("favoriteCount", songService.getFavoriteSongCount());
+    model.addAttribute("averageRating", songService.getFavoriteAverageRating());
+    model.addAttribute("favoriteDuration", songService.getFavoriteTotalDuration());
+    model.addAttribute("languageStats", songService.getFavoriteLanguageStats());
+    model.addAttribute("activePage", "favorites");
 
     return "favorites";
-
 }
 @GetMapping("/genre/{genre}")
 public String showSongsByGenre(@PathVariable String genre, Model model) {
@@ -235,10 +246,19 @@ public String sortByTitleDesc(Model model) {
 
 }
 @GetMapping("/top-rated")
-public String topRatedSongs(Model model) {
+public String topRatedSongs(
+        @RequestParam(required = false) String keyword,
+        Model model) {
 
-    model.addAttribute("songs", songService.getTopRatedSongs());
+    List<Song> songs;
+    if (keyword != null && !keyword.trim().isEmpty()) {
+        songs = songService.searchTopRatedSongs(keyword.trim());
+    } else {
+        songs = songService.getTopRatedSongs();
+    }
 
+    model.addAttribute("songs", songs);
+    model.addAttribute("keyword", keyword != null ? keyword.trim() : null);
     model.addAttribute("activePage", "top-rated");
 
     return "top-rated";

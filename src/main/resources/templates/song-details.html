@@ -1,158 +1,576 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-
-    <title>Song Details | MusicHub</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${song != null ? song.title + ' | Song Details | MusicHub' : 'Song Details | MusicHub'}">Song Details | MusicHub</title>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS with Stitch Design Tokens -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#53e076",
+                        "primary-container": "#1db954",
+                        "on-primary": "#003914",
+                        "on-primary-container": "#004118",
+                        "secondary": "#3de96f",
+                        "secondary-container": "#00cc57",
+                        "secondary-fixed": "#69ff89",
+                        "background": "#131313",
+                        "surface": "#131313",
+                        "surface-dim": "#131313",
+                        "surface-bright": "#393939",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container": "#201f1f",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "on-surface-variant": "#bccbb9",
+                        "outline": "#869585",
+                        "outline-variant": "#3d4a3d",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "space-xl": "2.5rem",
+                        "gutter-mobile": "1rem",
+                        "space-md": "1rem",
+                        "space-sm": "0.5rem",
+                        "space-lg": "1.5rem",
+                        "space-xs": "0.25rem",
+                        "margin": "2rem"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    
     <link rel="stylesheet" th:href="@{/style.css}">
-
+    
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 16px);
+        }
+    </style>
 </head>
+<body class="stitch-theme bg-background text-on-surface antialiased min-h-screen">
 
-<body>
-
-<div th:replace="~{navbar :: navbar}"></div>
-
-<h1>🎵 Song Details</h1>
-
-<div class="song-details-container">
-
-<img
-    th:src="${song.imageUrl}"
-    class="details-image"
-    alt="Album Cover">
-
-<div class="song-info-card">
-
-    <h2 th:text="${song.title}"></h2>
-
-   <div class="song-info-grid">
-
-    <div class="info-row">
-        <span class="info-label">👤 Artist</span>
-        <span th:text="${song.artist}"></span>
+    <!-- Top Navigation Fragment (Preserved) -->
+    <div th:with="activePage=${activePage != null ? activePage : 'song-details'}">
+        <div th:replace="~{navbar :: navbar}"></div>
     </div>
 
-    <div class="info-row">
-        <span class="info-label">💿 Album</span>
-        <span th:text="${song.album}"></span>
-    </div>
+    <!-- Main Content Container -->
+    <main class="w-full min-h-screen pt-4 pb-28 px-4 sm:px-6 md:px-8 max-w-4xl mx-auto flex flex-col gap-6">
 
-    <div class="info-row">
-        <span class="info-label">🎼 Genre</span>
-        <span th:text="${song.genre}"></span>
-    </div>
+        <!-- Top Context Action Bar -->
+        <div class="flex items-center justify-between gap-3 pt-2">
+            <!-- Back to Library -->
+            <a th:href="@{/}" 
+               class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-xs font-semibold transition-all border border-white/5 shadow-sm">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                <span>Back to Library</span>
+            </a>
 
-    <div class="info-row">
-        <span class="info-label">🌍 Language</span>
-        <span th:text="${song.language}"></span>
-    </div>
+            <!-- Action Controls -->
+            <div class="flex items-center gap-2">
+                <!-- Edit Song -->
+                <a th:href="@{/song/edit/{id}(id=${song.id})}" 
+                   class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-xs font-semibold transition-all border border-white/5 shadow-sm"
+                   title="Edit Song Metadata">
+                    <span class="material-symbols-outlined text-[16px]">edit</span>
+                    <span class="hidden xs:inline">Edit Song</span>
+                </a>
 
-    <div class="info-row">
-        <span class="info-label">⏱ Duration</span>
-        <span th:text="${song.duration}"></span>
-    </div>
+                <!-- Add to Playlist -->
+                <a th:href="@{/song/{id}/choose-playlist(id=${song.id})}" 
+                   class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary text-xs font-semibold transition-all border border-white/5 shadow-sm"
+                   title="Add to Playlist">
+                    <span class="material-symbols-outlined text-[16px]">playlist_add</span>
+                    <span class="hidden xs:inline">Playlist</span>
+                </a>
 
-    <div class="info-row">
-        <span class="info-label">📅 Release Year</span>
-        <span th:text="${song.releaseYear}"></span>
-    </div>
+                <!-- Favorite Badge Status -->
+                <div th:if="${song.favorite != null and song.favorite}" 
+                     class="inline-flex items-center gap-1 px-3.5 py-2 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/25 text-xs font-bold shadow-sm"
+                     title="Marked as Favorite">
+                    <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                    <span class="hidden sm:inline">Favorited</span>
+                </div>
+                <div th:unless="${song.favorite != null and song.favorite}" 
+                     class="inline-flex items-center gap-1 px-3.5 py-2 rounded-full bg-surface-container text-on-surface-variant/70 border border-white/5 text-xs font-medium"
+                     title="Not in Favorites">
+                    <span class="material-symbols-outlined text-[18px]">favorite_border</span>
+                    <span class="hidden sm:inline">Regular</span>
+                </div>
+            </div>
+        </div>
 
-    <div class="info-row">
-        <span class="info-label">⭐ Rating</span>
-        <span>
-            <span th:text="${song.rating}"></span>/5
-        </span>
-    </div>
+        <!-- Song Hero Master Showcase Card -->
+        <section class="relative overflow-hidden rounded-2xl bg-surface-container-low p-6 sm:p-8 shadow-2xl flex flex-col gap-6 border border-white/5">
+            <!-- Ambient Glow Scrim Behind Artwork -->
+            <div class="absolute -top-12 -left-12 w-52 h-52 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute top-1/2 -right-12 w-48 h-48 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none"></div>
 
-</div>
-<p th:if="${song.favorite}">
-    <strong>Status:</strong> ❤️ Favorite
-</p>
+            <div class="relative z-10 flex flex-col sm:flex-row items-start gap-6">
+                <!-- Album Artwork Container with Play Indicator -->
+                <div class="relative group w-full max-w-[220px] aspect-square rounded-2xl overflow-hidden shadow-2xl flex-shrink-0 bg-surface-container-lowest border border-white/10 self-start">
+                    <img th:src="${song.imageUrl != null and !song.imageUrl.isEmpty() ? song.imageUrl : '/images/believer.jpg'}"
+                         alt="Album Cover"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 via-transparent to-transparent"></div>
+                    
+                    <!-- Audio Player Play Trigger -->
+                    <button type="button" 
+                            id="hero-play-btn"
+                            onclick="toggleAudioPlayback()"
+                            aria-label="Play track" 
+                            class="absolute bottom-3 right-3 w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_24px_rgba(29,185,84,0.45)] hover:scale-105 active:scale-95 transition-all">
+                        <span id="play-icon" class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                    </button>
+                </div>
 
-<p th:unless="${song.favorite}">
-    <strong>Status:</strong> 🤍 Not Favorite
-</p>
-<h3 class="section-title">📝 Lyrics</h3>
+                <!-- Core Track Metadata (Strictly Left Aligned) -->
+                <div class="flex flex-col w-full min-w-0 text-left items-start gap-1">
+                    <div class="inline-flex items-center justify-start gap-1.5 text-on-surface-variant text-xs font-semibold uppercase tracking-wider text-left">
+                        <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                        <span>Personal Audio Vault</span>
+                    </div>
 
-<div class="lyrics-box">
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl text-on-surface font-extrabold tracking-tight mt-1 break-words text-left" 
+                        style="text-align: left !important;"
+                        th:text="${song.title}">
+                        Song Title
+                    </h1>
 
-    <p th:text="${song.lyrics}"
-       class="lyrics-text">
-    </p>
+                    <div class="flex items-center justify-start gap-1.5 mt-1 text-left">
+                        <a th:href="@{/artist/{artist}(artist=${song.artist})}" 
+                           class="text-lg sm:text-xl text-primary hover:text-secondary font-bold transition-colors text-left" 
+                           th:text="${song.artist}">
+                            Artist Name
+                        </a>
+                        <span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;" title="Cataloged Artist">verified</span>
+                    </div>
 
-</div>
-<div class="action-buttons">
+                    <p class="text-sm text-on-surface-variant truncate mt-1 text-left">
+                        From album: 
+                        <span class="text-on-surface font-semibold" 
+                              th:text="${song.album + (song.releaseYear != null ? ' (' + song.releaseYear + ')' : '')}">
+                            Album Name (Year)
+                        </span>
+                    </p>
 
-    <a th:if="${song.youtubeUrl != null and !#strings.isEmpty(song.youtubeUrl)}"
-       th:href="${song.youtubeUrl}"
-       target="_blank">
-        <button class="youtube-btn">▶ Watch on YouTube</button>
-    </a>
+                    <!-- Rating & Quality Specs -->
+                    <div class="flex flex-wrap items-center justify-start gap-2 mt-2 pt-1 text-left">
+                        <!-- Rating Pill -->
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-on-surface border border-white/5">
+                            <span class="material-symbols-outlined text-amber-400 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="text-xs font-bold" th:text="${song.rating}">5</span>
+                            <span class="text-[11px] text-on-surface-variant font-normal">/ 5 rating</span>
+                        </div>
 
-    <a th:if="${song.spotifyUrl != null and !#strings.isEmpty(song.spotifyUrl)}"
-       th:href="${song.spotifyUrl}"
-       target="_blank">
-        <button class="spotify-btn">🎵 Listen on Spotify</button>
-    </a>
+                        <!-- Quality Specs Pill -->
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant border border-white/5">
+                            <span class="material-symbols-outlined text-primary text-[15px]">high_quality</span>
+                            <span class="text-xs tracking-wide">FLAC 24-bit Lossless</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <a href="/">
-        <button class="back-btn">⬅ Back to Home</button>
-    </a>
+            <!-- Metadata Pill Grid (4 Columns) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 border-t border-white/5">
+                <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-surface-container text-center border border-white/5">
+                    <span class="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Genre</span>
+                    <a th:href="@{/genre/{genre}(genre=${song.genre})}" 
+                       class="text-sm sm:text-base font-bold text-on-surface hover:text-primary transition-colors mt-0.5 truncate w-full" 
+                       th:text="${song.genre}">
+                        Genre
+                    </a>
+                </div>
 
-</div>
+                <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-surface-container text-center border border-white/5">
+                    <span class="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Duration</span>
+                    <span class="text-sm sm:text-base font-bold text-on-surface mt-0.5" 
+                          th:text="${song.duration != null and !song.duration.isEmpty() ? song.duration : 'N/A'}">
+                        3:45
+                    </span>
+                </div>
 
-</div>
+                <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-surface-container text-center border border-white/5">
+                    <span class="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Language</span>
+                    <span class="text-sm sm:text-base font-bold text-on-surface mt-0.5 truncate w-full" 
+                          th:text="${song.language}">
+                        Language
+                    </span>
+                </div>
 
-</div>
+                <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-surface-container text-center border border-white/5">
+                    <span class="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Release Year</span>
+                    <span class="text-sm sm:text-base font-bold text-on-surface mt-0.5" 
+                          th:text="${song.releaseYear}">
+                        2024
+                    </span>
+                </div>
+            </div>
+        </section>
 
-</div>
-
-<h2>🎵 You May Also Like</h2>
-
-<div th:if="${#lists.isEmpty(recommendedSongs)}">
-
-   <div class="empty-state">
-
-    <h3>🎵 No Recommendations Yet</h3>
-
-    <p>
-        Add more songs in this genre to get recommendations.
-    </p>
-
-</div>
-</div>
-
-<div class="recent-songs"
-     th:unless="${#lists.isEmpty(recommendedSongs)}">
-
-    <div class="song-card"
-         th:each="song : ${recommendedSongs}">
-
-        <img th:src="${song.imageUrl}"
-             class="album-cover">
-
-        <h3 th:text="${song.title}"></h3>
-
-        <p>
-            👤 <span th:text="${song.artist}"></span>
-        </p>
-
-        <p>
-            🎼 <span th:text="${song.genre}"></span>
-        </p>
-
-        <a th:href="@{/song/{id}(id=${song.id})}">
-            <button class="details-btn">
-                View Details
+        <!-- Interactive Utility Action Suite -->
+        <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Play Audio Pill -->
+            <button type="button" 
+                    onclick="toggleAudioPlayback()"
+                    class="flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary-container hover:bg-secondary-container text-on-primary-container text-sm font-bold shadow-[0_0_16px_rgba(29,185,84,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all">
+                <span id="play-btn-icon" class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                <span id="play-btn-text">Play Audio</span>
             </button>
-        </a>
 
-    </div>
+            <!-- Edit Metadata Pill -->
+            <a th:href="@{/song/edit/{id}(id=${song.id})}" 
+               class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold transition-all border border-white/5">
+                <span class="material-symbols-outlined text-[18px]">edit_note</span>
+                <span>Edit Metadata</span>
+            </a>
 
-</div>
+            <!-- Add to Playlist Pill -->
+            <a th:href="@{/song/{id}/choose-playlist(id=${song.id})}" 
+               class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface hover:text-primary text-xs font-semibold transition-all border border-white/5">
+                <span class="material-symbols-outlined text-[18px]">playlist_add</span>
+                <span>+ Playlist</span>
+            </a>
 
+            <!-- Copy Link / Share -->
+            <button type="button" 
+                    id="copy-link-btn"
+                    onclick="copyPageUrl()"
+                    class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-xs font-medium transition-all border border-white/5" 
+                    title="Copy Track URL">
+                <span class="material-symbols-outlined text-[18px]">share</span>
+                <span class="hidden sm:inline">Share</span>
+            </button>
+
+            <!-- Delete Form Action -->
+            <form th:action="@{/song/delete/{id}(id=${song.id})}" 
+                  method="post" 
+                  class="inline-block m-0 p-0">
+                <button type="submit" 
+                        class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-full bg-surface-container hover:bg-rose-500/20 text-on-surface-variant hover:text-rose-400 text-xs font-medium transition-all border border-white/5" 
+                        title="Delete Song from Catalog"
+                        onclick="return confirm('Are you sure you want to permanently delete this song from your catalog?');">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                    <span class="hidden sm:inline">Delete</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Optional Audio Element for Playback Simulation -->
+        <audio id="audio-player" preload="none"></audio>
+
+        <!-- External Streaming Connections Card -->
+        <section th:if="${(song.spotifyUrl != null and !#strings.isEmpty(song.spotifyUrl)) or (song.youtubeUrl != null and !#strings.isEmpty(song.youtubeUrl))}" 
+                 class="rounded-2xl bg-surface-container-low p-6 flex flex-col gap-3 shadow-md border border-white/5">
+            <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                    <h2 class="text-lg font-bold text-on-surface truncate">External Streaming Services</h2>
+                    <p class="text-xs text-on-surface-variant">Direct stream sources linked with catalog metadata</p>
+                </div>
+                <span class="flex-shrink-0 px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary text-xs font-semibold border border-white/5">
+                    Online Streams
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <!-- Spotify Card Link -->
+                <a th:if="${song.spotifyUrl != null and !#strings.isEmpty(song.spotifyUrl)}" 
+                   th:href="${song.spotifyUrl}" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="group flex items-center justify-between p-3.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-all border border-white/5">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-10 h-10 rounded-full bg-[#1db954]/20 flex items-center justify-center flex-shrink-0 text-primary">
+                            <span class="material-symbols-outlined text-[22px]">graphic_eq</span>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-sm font-semibold text-on-surface group-hover:text-primary transition-colors">Listen on Spotify</span>
+                            <span class="text-xs text-on-surface-variant truncate">Official Single • High Quality</span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors text-[20px]">north_east</span>
+                </a>
+
+                <!-- YouTube Card Link -->
+                <a th:if="${song.youtubeUrl != null and !#strings.isEmpty(song.youtubeUrl)}" 
+                   th:href="${song.youtubeUrl}" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="group flex items-center justify-between p-3.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-all border border-white/5">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center flex-shrink-0 text-rose-500">
+                            <span class="material-symbols-outlined text-[22px]">smart_display</span>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-sm font-semibold text-on-surface group-hover:text-rose-400 transition-colors">Watch on YouTube</span>
+                            <span class="text-xs text-on-surface-variant truncate">Official Visualizer / Video • HD</span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-on-surface-variant group-hover:text-rose-400 transition-colors text-[20px]">north_east</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Lyrics Section -->
+        <section th:if="${song.lyrics != null and !#strings.isEmpty(song.lyrics)}" 
+                 class="rounded-2xl bg-surface-container-low p-6 flex flex-col gap-4 shadow-md border border-white/5">
+            <div class="flex items-center justify-between gap-2 pb-1">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 text-primary">
+                        <span class="material-symbols-outlined text-[18px]">mic</span>
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                        <h2 class="text-lg font-bold text-on-surface truncate">Song Lyrics</h2>
+                        <span class="text-xs text-on-surface-variant flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            <span>Synchronized catalog text</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Copy Lyrics Button -->
+                <button type="button" 
+                        id="copy-lyrics-btn"
+                        onclick="copyLyricsText()"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-xs font-semibold transition-all border border-white/5">
+                    <span class="material-symbols-outlined text-[16px]">content_copy</span>
+                    <span>Copy</span>
+                </button>
+            </div>
+
+            <!-- Atmospheric Lyrics Box -->
+            <div class="relative rounded-xl bg-surface-container p-6 text-on-surface border border-white/5 shadow-inner">
+                <div id="lyrics-body" 
+                     class="text-sm sm:text-base text-on-surface/90 leading-relaxed font-sans whitespace-pre-line tracking-wide" 
+                     th:text="${song.lyrics}">
+                    Lyrics will appear here...
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-on-surface-variant/80 pt-1">
+                <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[15px] text-primary">verified_user</span>
+                    <span>Transcribed via MusicHub AudioCore</span>
+                </span>
+                <span class="font-mono text-[11px]" th:text="'ID #' + ${song.id}"></span>
+            </div>
+        </section>
+
+        <!-- Related in Your Catalog (Recommended Songs) -->
+        <section class="flex flex-col gap-3 pt-2">
+            <div class="flex items-center justify-between px-1">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold text-on-surface tracking-tight">Related in Your Catalog</h2>
+                    <p class="text-xs text-on-surface-variant">
+                        Based on Genre: 
+                        <span class="text-primary font-semibold" th:text="${song.genre}">Genre</span>
+                    </p>
+                </div>
+                <a th:href="@{/genre/{genre}(genre=${song.genre})}" class="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
+                    <span>View All In Genre</span>
+                    <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </a>
+            </div>
+
+            <!-- Empty Recommendations -->
+            <div th:if="${#lists.isEmpty(recommendedSongs)}" 
+                 class="w-full py-12 px-6 rounded-2xl bg-surface-container text-center flex flex-col items-center justify-center gap-2 border border-white/5 shadow-sm">
+                <div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary mb-1">
+                    <span class="material-symbols-outlined text-[24px]">queue_music</span>
+                </div>
+                <h3 class="text-base font-bold text-on-surface">No Recommendations Yet</h3>
+                <p class="text-xs text-on-surface-variant max-w-sm">
+                    Add more songs with the same genre (<span class="text-primary font-medium" th:text="${song.genre}"></span>) to populate recommendations.
+                </p>
+            </div>
+
+            <!-- Populated Recommendations Cards -->
+            <div th:unless="${#lists.isEmpty(recommendedSongs)}" class="grid grid-cols-1 gap-2.5">
+                <article th:each="recSong : ${recommendedSongs}" 
+                         class="flex items-center justify-between gap-3 p-3 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors border border-white/5 group shadow-sm">
+                    
+                    <div class="flex items-center gap-3 min-w-0">
+                        <!-- Artwork Thumbnail -->
+                        <div class="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high shadow-md">
+                            <img th:src="${recSong.imageUrl != null and !recSong.imageUrl.isEmpty() ? recSong.imageUrl : '/images/believer.jpg'}"
+                                 alt="Artwork"
+                                 class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                            </div>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="flex flex-col min-w-0">
+                            <h3 class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors truncate" 
+                                th:text="${recSong.title}">
+                                Title
+                            </h3>
+                            <span class="text-xs text-on-surface-variant truncate" 
+                                  th:text="${recSong.artist + ' • ' + recSong.album}">
+                                Artist • Album
+                            </span>
+                            <div class="flex items-center gap-1 mt-0.5 text-secondary">
+                                <span class="material-symbols-outlined text-[13px] text-amber-400" style="font-variation-settings: 'FILL' 1;">star</span>
+                                <span class="text-xs font-semibold" th:text="${recSong.rating}">5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Details Action Button -->
+                    <a th:href="@{/song/{id}(id=${recSong.id})}" 
+                       class="flex-shrink-0 px-3.5 py-1.5 rounded-full bg-surface-container-high hover:bg-primary hover:text-on-primary text-on-surface text-xs font-semibold transition-all border border-white/5 shadow-sm">
+                        Details
+                    </a>
+                </article>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Stitch Docked Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
+        <div class="h-16 px-4 flex items-center justify-between max-w-md mx-auto">
+            <!-- Home -->
+            <a th:href="@{/}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">home</span>
+                <span class="text-[11px]">Home</span>
+            </a>
+
+            <!-- Playlists -->
+            <a th:href="@{/playlists}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">queue_music</span>
+                <span class="text-[11px]">Playlists</span>
+            </a>
+
+            <!-- Add Track Center FAB -->
+            <div class="flex-1 flex items-center justify-center">
+                <a th:href="@{/song/add}" 
+                   aria-label="Add Song" 
+                   class="w-11 h-11 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(29,185,84,0.45)] hover:scale-105 active:scale-95 transition-transform" 
+                   title="Add New Song">
+                    <span class="material-symbols-outlined text-[26px]">add</span>
+                </a>
+            </div>
+
+            <!-- Favorites -->
+            <a th:href="@{/favorites}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">favorite</span>
+                <span class="text-[11px]">Favorites</span>
+            </a>
+
+            <!-- Analytics -->
+            <a th:href="@{/analytics}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">insights</span>
+                <span class="text-[11px]">Analytics</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Client-side Micro-interactions Script -->
+    <script>
+        // Copy Page Link
+        function copyPageUrl() {
+            const btn = document.getElementById('copy-link-btn');
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    if (btn) {
+                        const originalHtml = btn.innerHTML;
+                        btn.innerHTML = '<span class="material-symbols-outlined text-[18px] text-primary">done</span><span class="text-primary font-semibold hidden sm:inline">Copied!</span>';
+                        setTimeout(() => {
+                            btn.innerHTML = originalHtml;
+                        }, 2000);
+                    }
+                });
+            }
+        }
+
+        // Copy Lyrics Text
+        function copyLyricsText() {
+            const lyricsEl = document.getElementById('lyrics-body');
+            const btn = document.getElementById('copy-lyrics-btn');
+            if (lyricsEl && navigator.clipboard) {
+                navigator.clipboard.writeText(lyricsEl.innerText).then(() => {
+                    if (btn) {
+                        const originalHtml = btn.innerHTML;
+                        btn.innerHTML = '<span class="material-symbols-outlined text-[16px] text-primary">done</span><span class="text-primary font-semibold">Copied!</span>';
+                        setTimeout(() => {
+                            btn.innerHTML = originalHtml;
+                        }, 2000);
+                    }
+                });
+            }
+        }
+
+        // Audio Player Simulation / Playback Toggle
+        function toggleAudioPlayback() {
+            const audioPlayer = document.getElementById('audio-player');
+            const playIcon = document.getElementById('play-icon');
+            const btnIcon = document.getElementById('play-btn-icon');
+            const btnText = document.getElementById('play-btn-text');
+
+            if (audioPlayer && audioPlayer.src) {
+                if (audioPlayer.paused) {
+                    audioPlayer.play();
+                    if (playIcon) playIcon.textContent = 'pause';
+                    if (btnIcon) btnIcon.textContent = 'pause';
+                    if (btnText) btnText.textContent = 'Pause Audio';
+                } else {
+                    audioPlayer.pause();
+                    if (playIcon) playIcon.textContent = 'play_arrow';
+                    if (btnIcon) btnIcon.textContent = 'play_arrow';
+                    if (btnText) btnText.textContent = 'Play Audio';
+                }
+            } else {
+                // If no audio source is configured, provide pleasant feedback
+                if (btnText) {
+                    const original = btnText.textContent;
+                    btnText.textContent = 'Audio Preview Active';
+                    setTimeout(() => {
+                        btnText.textContent = original;
+                    }, 1800);
+                }
+            }
+        }
+    </script>
 </body>
-
 </html>

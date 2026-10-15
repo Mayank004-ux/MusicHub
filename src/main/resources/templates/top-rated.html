@@ -1,167 +1,383 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Sorted Songs</title>
-    <p class="subtitle">
-
-Your Personal Music Library
-
-</p>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Rated Songs | MusicHub</title>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS with Stitch Design Tokens -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#53e076",
+                        "primary-container": "#1db954",
+                        "on-primary": "#003914",
+                        "on-primary-container": "#004118",
+                        "secondary": "#3de96f",
+                        "background": "#131313",
+                        "surface": "#131313",
+                        "surface-container": "#201f1f",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "on-surface-variant": "#bccbb9"
+                    }
+                }
+            }
+        };
+    </script>
     <link rel="stylesheet" th:href="@{/style.css}">
+    <style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+    </style>
 </head>
+<body class="stitch-theme bg-background text-on-surface antialiased min-h-screen">
 
-<body>
-
-    <div th:replace="~{navbar :: navbar}"></div>
-
-    <h1>⭐ Top Rated Songs</h1>
-
-   <a href="/" class="back-btn">⬅ Back to Home</a>
-
-<br>
-
-
-
-<br>
-<br>
-
-    <h3>Search Songs</h3>
-
-    <input
-    type="text"
-    id="searchInput"
-    placeholder="Search here...">
-    <br>
-
-
-
-    <hr>
-
-  <div class="song-card" th:each="song : ${songs}">
-
-    <img th:src="${song.imageUrl}"
-     alt="Album Cover"
-     class="album-cover">
- <div class="card-content">
-
-    <!-- Song title -->
-    <!-- Artist -->
-    <!-- Album -->
-    <!-- Genre -->
-    <!-- Language -->
-    <!-- Buttons -->
-
-</div>
-    <h2 class="song-title" th:text="${song.title}"></h2>
-
-    <p>
-        👤 <span class="song-artist" th:text="${song.artist}"></span>
-    </p>
-
-    <p>
-        💿 <span class="song-album" th:text="${song.album}"></span>
-    </p>
-    <p>
-
-🎼
-
-<span th:text="${song.genre}"> </span>
-<p>
-
-🌍
-
-<span
-th:text="${song.language}">
-</span>
-<p>
-    ⭐ <span th:text="${song.rating}"></span>/5
-</p>
-<p th:if="${song.favorite}">
-    ❤️ Favorite
-</p>
-
-<p th:unless="${song.favorite}">
-    🤍 Not Favorite
-</p>
-<p>
-    ⏱ <span th:text="${song.duration}"></span>
-</p>
-<p>
-    📅 <span th:text="${song.releaseYear}"></span>
-</p>
-</p>
-</p>
-    <div class="button-group">
-
-       <a th:href="@{/song/{id}(id=${song.id})}">
-
-    <button class="details-btn">
-
-        Details
-
-    </button>
-
-</a>
-
-       <a th:href="@{/song/edit/{id}(id=${song.id})}">
-    <button class="edit-btn">
-        Edit
-    </button>
-</a>
-
-        <form th:action="@{/song/delete/{id}(id=${song.id})}"
-      method="post"
-      style="display:inline;">
-
-    <button class="delete-btn"
-            onclick="return confirm('Are you sure you want to delete this song?')">
-
-        Delete
-
-    </button>
-
-</form>
-
+    <!-- Top Navigation Fragment -->
+    <div th:with="activePage='top-rated'">
+        <div th:replace="~{navbar :: navbar}"></div>
     </div>
 
-</div>
-<script>
+    <!-- Main Content Container -->
+    <main class="w-full min-h-screen pt-4 pb-28 px-4 sm:px-6 md:px-8 max-w-6xl mx-auto flex flex-col space-y-6">
 
-const searchInput = document.getElementById("searchInput");
+        <!-- Top Breadcrumb -->
+        <div class="flex items-center justify-between text-xs text-on-surface-variant">
+            <a th:href="@{/}" class="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                <span>Back to Library</span>
+            </a>
+            <span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-medium">
+                Rating Rank 5★ - 1★
+            </span>
+        </div>
 
-searchInput.addEventListener("keyup", function () {
+        <!-- Header Hero Banner -->
+        <section class="relative overflow-hidden rounded-2xl bg-surface-container p-6 sm:p-8 shadow-2xl border border-white/10 text-left">
+            <div class="absolute -top-10 -right-10 w-52 h-52 bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    const keyword = searchInput.value.toLowerCase();
+            <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-400/15 text-amber-400 border border-amber-400/25 flex items-center justify-center shadow-[0_0_20px_rgba(251,191,36,0.25)] flex-shrink-0">
+                        <span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Top Rated Songs</h1>
+                            <span class="px-2.5 py-0.5 rounded-full bg-amber-400/15 text-amber-400 text-xs font-bold border border-amber-400/20"
+                                  th:text="${songs != null ? songs.size() : 0}">0</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-on-surface-variant mt-1">
+                            Tracks ordered by community star rating from your PostgreSQL collection.
+                        </p>
+                    </div>
+                </div>
 
-    const cards = document.querySelectorAll(".song-card");
+                <a th:href="@{/song/add}"
+                   class="h-10 px-5 rounded-full bg-primary-container hover:bg-[#1ed760] text-[#003914] font-bold text-xs flex items-center justify-center gap-1.5 shadow-[0_0_16px_rgba(29,185,84,0.35)] active:scale-95 transition-all flex-shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    <span>Add Song</span>
+                </a>
+            </div>
+        </section>
 
-    cards.forEach(function(card){
+        <!-- Search Bar -->
+        <section class="relative">
+            <form th:action="@{/top-rated}" method="get" id="topRatedSearchForm" class="musichub-search-form group">
+                <div class="musichub-search-icon">
+                    <span class="material-symbols-outlined text-[22px]">search</span>
+                </div>
+                
+                <input type="text"
+                       name="keyword"
+                       id="searchInput"
+                       th:value="${keyword}"
+                       placeholder="Search songs, artists, albums..."
+                       class="musichub-search-input"
+                       autocomplete="off" />
+                
+                <div class="musichub-search-actions">
+                    <!-- Live Match Count Badge -->
+                    <span id="topRatedMatchCount" class="hidden musichub-search-badge"></span>
 
-        const title =
-        card.querySelector(".song-title").innerText.toLowerCase();
+                    <!-- Clear Search Button -->
+                    <button type="button" 
+                            id="clearSearchBtn"
+                            onclick="clearTopRatedSearch()"
+                            class="musichub-search-clear"
+                            th:classappend="${keyword != null and !keyword.isEmpty()} ? '' : 'opacity-0 pointer-events-none'"
+                            title="Clear search (Esc)"
+                            aria-label="Clear search">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                    </button>
 
-        const artist =
-        card.querySelector(".song-artist").innerText.toLowerCase();
+                    <!-- Keyboard shortcut hint -->
+                    <kbd class="musichub-search-kbd" title="Press / to search">/</kbd>
 
-        const album =
-        card.querySelector(".song-album").innerText.toLowerCase();
+                    <!-- Green Search Button -->
+                    <button type="submit" class="musichub-search-btn" id="topRatedSearchBtn">
+                        <span>Search</span>
+                    </button>
+                </div>
+            </form>
 
-        if(title.includes(keyword)
-            || artist.includes(keyword)
-            || album.includes(keyword)){
+            <!-- Inline No Matches Feedback for Top Rated -->
+            <div id="noTopRatedMatches" class="hidden mt-4 p-6 rounded-xl bg-surface-container border border-white/5 text-center flex flex-col items-center justify-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[20px]">search_off</span>
+                </div>
+                <p class="text-sm text-on-surface font-semibold">No top rated tracks match "<span id="topRatedQueryEcho" class="text-primary font-bold"></span>"</p>
+                <p class="text-xs text-on-surface-variant">Try searching for another song title, artist, or album.</p>
+                <button type="button" onclick="clearTopRatedSearch()" class="mt-1 text-xs text-primary font-semibold hover:underline">
+                    Clear Search Filter
+                </button>
+            </div>
+        </section>
 
-            card.style.display="block";
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(songs)}" class="p-10 rounded-2xl bg-surface-container border border-white/5 text-center flex flex-col items-center justify-center gap-3 text-sm">
+            <div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+                <span class="material-symbols-outlined text-[26px]">search_off</span>
+            </div>
+            <div th:if="${keyword != null and !keyword.isEmpty()}">
+                <p class="text-base text-white font-semibold">No top rated tracks match "<span class="text-primary font-bold" th:text="${keyword}"></span>"</p>
+                <p class="text-xs text-on-surface-variant mt-1">Try another keyword or reset the search to view all top rated tracks.</p>
+                <a th:href="@{/top-rated}" class="mt-3 inline-flex items-center gap-1 px-4 py-1.5 rounded-full bg-primary-container text-[#003914] text-xs font-bold hover:bg-[#1ed760] transition-colors">
+                    <span class="material-symbols-outlined text-[14px]">refresh</span>
+                    <span>View All Top Rated</span>
+                </a>
+            </div>
+            <div th:unless="${keyword != null and !keyword.isEmpty()}">
+                <p class="text-on-surface-variant">No rated songs available. <a th:href="@{/song/add}" class="text-primary underline font-semibold">Add a track with ratings</a>.</p>
+            </div>
+        </div>
 
-        }else{
+        <!-- Songs Cards Grid -->
+        <div th:unless="${#lists.isEmpty(songs)}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
+            <article th:each="song : ${songs}"
+                     class="song-card p-4 rounded-2xl bg-surface-container hover:bg-surface-container-high transition-all border border-white/5 flex flex-col justify-between space-y-4 shadow-sm group">
+                
+                <div class="space-y-3">
+                    <!-- Artwork & Rating Badge -->
+                    <div class="relative h-44 w-full rounded-xl overflow-hidden bg-surface-container-high flex items-center justify-center shadow-md">
+                        <img th:if="${song.imageUrl != null and !#strings.isEmpty(song.imageUrl)}"
+                             th:src="${song.imageUrl}"
+                             alt="Album Cover"
+                             class="album-cover w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span th:class="${'material-symbols-outlined text-primary text-[48px]' + (song.imageUrl != null and !#strings.isEmpty(song.imageUrl) ? ' hidden' : '')}">music_note</span>
 
-            card.style.display="none";
+                        <!-- Rating Badge Over Artwork -->
+                        <div th:if="${song.rating != null}"
+                             class="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-amber-400 font-bold text-xs flex items-center gap-1 border border-amber-400/30 shadow-md">
+                            <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span th:text="${song.rating}">5</span>
+                        </div>
 
+                        <!-- Favorite Heart Over Artwork -->
+                        <div th:if="${song.favorite}" 
+                             class="absolute top-2.5 left-2.5 w-7 h-7 rounded-full bg-black/70 backdrop-blur-md text-rose-500 flex items-center justify-center border border-rose-500/30">
+                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                        </div>
+                    </div>
+
+                    <!-- Song Metadata -->
+                    <div class="space-y-1">
+                        <h2 class="song-title text-base font-bold text-white truncate group-hover:text-primary transition-colors text-left"
+                            style="color: #ffffff !important;"
+                            th:text="${song.title}">
+                            Song Title
+                        </h2>
+                        <p class="text-xs text-on-surface-variant truncate text-left">
+                            <span class="song-artist text-primary font-medium" th:text="${song.artist}">Artist</span>
+                            <span th:if="${song.album != null and !#strings.isEmpty(song.album)}"> &bull; <span class="song-album" th:text="${song.album}"></span></span>
+                        </p>
+                        <div class="flex items-center gap-2 pt-1 text-[11px] text-on-surface-variant">
+                            <span th:if="${song.genre != null and !#strings.isEmpty(song.genre)}"
+                                  class="px-2 py-0.5 rounded bg-surface-container-high border border-white/5"
+                                  th:text="${song.genre}">Genre</span>
+                            <span th:if="${song.duration != null and !#strings.isEmpty(song.duration)}"
+                                  th:text="${song.duration}">Duration</span>
+                            <span th:if="${song.releaseYear != null}"
+                                  th:text="${song.releaseYear}">Year</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between pt-3 border-t border-white/5 button-group">
+                    <a th:href="@{/song/{id}(id=${song.id})}"
+                       class="details-btn px-4 py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-white text-xs font-semibold flex items-center gap-1 transition-all border border-white/5">
+                        <span class="material-symbols-outlined text-[14px]">info</span>
+                        <span>Details</span>
+                    </a>
+
+                    <div class="flex items-center gap-1.5">
+                        <a th:href="@{/song/edit/{id}(id=${song.id})}"
+                           class="edit-btn w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-white hover:bg-surface-container-highest transition-colors"
+                           title="Edit Track">
+                            <span class="material-symbols-outlined text-[16px]">edit</span>
+                        </a>
+
+                        <form th:action="@{/song/delete/{id}(id=${song.id})}" method="post" class="inline">
+                            <button type="submit"
+                                    class="delete-btn w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                                    onclick="return confirm('Are you sure you want to delete this song?')"
+                                    title="Delete Track">
+                                <span class="material-symbols-outlined text-[16px]">delete</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </article>
+        </div>
+
+    </main>
+
+    <!-- Docked Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
+        <div class="h-16 px-4 flex items-center justify-between max-w-md mx-auto">
+            <a th:href="@{/}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">home</span>
+                <span class="text-[11px]">Home</span>
+            </a>
+            <a th:href="@{/playlists}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">queue_music</span>
+                <span class="text-[11px]">Playlists</span>
+            </a>
+            <div class="flex-1 flex items-center justify-center">
+                <a th:href="@{/song/add}" aria-label="Add Song" class="w-11 h-11 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(29,185,84,0.45)] hover:scale-105 active:scale-95 transition-transform" title="Add New Song">
+                    <span class="material-symbols-outlined text-[26px]">add</span>
+                </a>
+            </div>
+            <a th:href="@{/favorites}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">favorite</span>
+                <span class="text-[11px]">Favorites</span>
+            </a>
+            <a th:href="@{/analytics}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">insights</span>
+                <span class="text-[11px]">Analytics</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Client-side Search Script (Preserves 5★ - 1★ Rating Order) -->
+    <script>
+        const searchInput = document.getElementById("searchInput");
+        const clearBtn = document.getElementById("clearSearchBtn");
+        const countBadge = document.getElementById("topRatedMatchCount");
+        const noMatchesBox = document.getElementById("noTopRatedMatches");
+        const queryEcho = document.getElementById("topRatedQueryEcho");
+        const topRatedSearchForm = document.getElementById("topRatedSearchForm");
+
+        function filterTopRated(keyword) {
+            const cards = document.querySelectorAll(".song-card");
+            let visibleCount = 0;
+            cards.forEach(function(card){
+                const titleElem = card.querySelector(".song-title");
+                const artistElem = card.querySelector(".song-artist");
+                const albumElem = card.querySelector(".song-album");
+                const genreElem = card.querySelector(".song-genre");
+                const title = titleElem ? titleElem.innerText.toLowerCase() : "";
+                const artist = artistElem ? artistElem.innerText.toLowerCase() : "";
+                const album = albumElem ? albumElem.innerText.toLowerCase() : "";
+                const genre = genreElem ? genreElem.innerText.toLowerCase() : "";
+
+                const matches = keyword === "" || 
+                    title.includes(keyword) || 
+                    artist.includes(keyword) || 
+                    album.includes(keyword) || 
+                    genre.includes(keyword);
+
+                if(matches){
+                    card.style.display = "";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            // Toggle clear button
+            if (clearBtn) {
+                if (keyword.length > 0) {
+                    clearBtn.classList.remove("opacity-0", "pointer-events-none");
+                } else {
+                    clearBtn.classList.add("opacity-0", "pointer-events-none");
+                }
+            }
+
+            // Update live match count badge
+            if (countBadge) {
+                if (keyword.length > 0) {
+                    countBadge.innerText = visibleCount + (visibleCount === 1 ? ' track' : ' tracks');
+                    countBadge.classList.remove("hidden");
+                } else {
+                    countBadge.classList.add("hidden");
+                }
+            }
+
+            // Update no-matches feedback
+            if (noMatchesBox) {
+                if (visibleCount === 0 && keyword.length > 0) {
+                    if (queryEcho) queryEcho.innerText = keyword;
+                    noMatchesBox.classList.remove("hidden");
+                } else {
+                    noMatchesBox.classList.add("hidden");
+                }
+            }
         }
 
-    });
+        function clearTopRatedSearch() {
+            if (searchInput) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const hadParam = urlParams.has("keyword") && urlParams.get("keyword").length > 0;
+                searchInput.value = "";
+                filterTopRated("");
+                if (clearBtn) clearBtn.classList.add("opacity-0", "pointer-events-none");
+                searchInput.focus();
+                if (hadParam) {
+                    window.location.href = window.location.pathname;
+                }
+            }
+        }
 
-});
+        if (searchInput) {
+            if (!searchInput.value) {
+                if (clearBtn) clearBtn.classList.add("opacity-0", "pointer-events-none");
+            } else {
+                if (clearBtn) clearBtn.classList.remove("opacity-0", "pointer-events-none");
+            }
+            searchInput.addEventListener("input", function () {
+                const keyword = searchInput.value.trim().toLowerCase();
+                filterTopRated(keyword);
+            });
+        }
 
-</script>
+        // Global Shortcut: '/' to focus, 'Escape' to clear
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "/" && document.activeElement !== searchInput && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+                e.preventDefault();
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            } else if (e.key === "Escape" && document.activeElement === searchInput) {
+                clearTopRatedSearch();
+                searchInput.blur();
+            }
+        });
+    </script>
+
 </body>
 </html>

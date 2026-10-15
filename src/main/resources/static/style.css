@@ -26,7 +26,7 @@ h3{
     text-align:center;
 }
 
-input{
+body:not(.stitch-theme) input:not(.musichub-search-input){
     width:300px;
     padding:10px;
     font-size:16px;
@@ -782,106 +782,119 @@ button:hover{
    ========================================= */
 
 .navbar {
-    display: flex;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background: rgba(18, 18, 18, 0.92) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    padding: 0 28px !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 64px !important;
+    z-index: 1000 !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-sizing: border-box !important;
+}
 
-    justify-content: space-between;
+.navbar .logo {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    text-decoration: none !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.02em !important;
+    color: #ffffff !important;
+    transition: transform 0.2s ease, opacity 0.2s ease !important;
+}
+
+.navbar .logo:hover {
+    transform: scale(1.02);
+    opacity: 0.95;
+    color: #ffffff !important;
+}
+
+.logo-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: rgba(29, 185, 84, 0.16);
+    border: 1px solid rgba(29, 185, 84, 0.35);
+    display: inline-flex;
     align-items: center;
-
-    background: rgba(15, 15, 20, 0.95);
-
-    padding: 14px 30px;
-
-    position: fixed;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-
-    z-index: 1000;
-
-    box-shadow:
-        0 4px 20px rgba(0, 0, 0, 0.35);
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.08);
-
-    box-sizing: border-box;
-
-    backdrop-filter: blur(10px);
+    justify-content: center;
+    color: #53e076;
+    box-shadow: 0 0 12px rgba(83, 224, 118, 0.25);
+    flex-shrink: 0;
 }
 
-.logo {
-    color: #a855f7 !important;
+.logo-symbol {
+    font-size: 20px !important;
+}
 
-    font-size: 26px;
+.logo-text {
+    font-weight: 800;
+    color: #ffffff !important;
+}
 
+.nav-pill-badge {
+    font-size: 11px;
     font-weight: 700;
-
-    text-decoration: none;
-
-    transition: color 0.25s ease;
-}
-
-.logo:hover {
-    color: #ec4899 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2.5px 8px;
+    border-radius: 9999px;
+    background: #2a2a2a;
+    color: #bccbb9;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-left: 2px;
 }
 
 .nav-links {
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
 }
 
 .nav-links a {
-    color: #d4d4d8;
+    color: #bccbb9 !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    padding: 7px 12px !important;
+    border-radius: 9999px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.2s ease !important;
+}
 
-    text-decoration: none;
-
-    font-weight: 600;
-
-    padding: 9px 13px;
-
-    border-radius: 9px;
-
-    transition:
-        background 0.25s ease,
-        color 0.25s ease,
-        transform 0.25s ease;
+.nav-links a .nav-icon {
+    font-size: 17px !important;
+    line-height: 1 !important;
 }
 
 .nav-links a:hover {
-    background: rgba(124, 58, 237, 0.15);
-
-    color: #ffffff;
-
+    background: rgba(83, 224, 118, 0.12) !important;
+    color: #53e076 !important;
     transform: translateY(-1px);
 }
 
-.logo:hover {
-
-    transform: scale(1.05);
-
-    transition: 0.3s;
-
+.nav-links a.active-nav,
+.active-nav {
+    background: #1DB954 !important;
+    color: #003914 !important;
+    font-weight: 700 !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 0 16px rgba(29, 185, 84, 0.4) !important;
 }
 
-.nav-links a {
-
-    padding: 8px 14px;
-
-    border-radius: 8px;
-
-}
-
-.nav-links a:hover {
-
-    background-color: #444;
-
-    color: white;
-
+.nav-links a.active-nav .nav-icon,
+.active-nav .nav-icon {
+    color: #003914 !important;
 }
 .page-container {
 
@@ -891,20 +904,6 @@ button:hover{
 
     padding: 25px;
 
-}
-.active-nav {
-    background: linear-gradient(
-        135deg,
-        #7c3aed,
-        #ec4899
-    ) !important;
-
-    color: #ffffff !important;
-
-    border-radius: 9px;
-
-    box-shadow:
-        0 5px 15px rgba(124, 58, 237, 0.25);
 }
 .success-message {
 
@@ -1241,13 +1240,31 @@ button:hover{
     margin-top:5px;
     margin-bottom:10px;
 }
-.footer{
-    margin-top:50px;
-    padding:20px;
-    text-align:center;
-    background:#1b1b1b;
-    color:white;
-    font-size:14px;
+.footer {
+    margin-top: 40px !important;
+    padding: 24px 20px !important;
+    text-align: center !important;
+    background: #131313 !important;
+    color: #869585 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    font-size: 13px !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+.footer .footer-main {
+    margin: 0 !important;
+    color: #bccbb9 !important;
+    font-size: 13px !important;
+}
+
+.footer .footer-main strong {
+    color: #53e076 !important;
+}
+
+.footer .footer-sub {
+    margin: 5px 0 0 0 !important;
+    color: #869585 !important;
+    font-size: 11px !important;
 }
 /* ================================
    MusicHub Final UI Theme
@@ -1690,126 +1707,321 @@ body {
     }
 }
 /* =========================================
-   MOBILE NAVBAR
+   RESPONSIVE NAVBAR & STITCH THEME
    ========================================= */
 
-@media (max-width: 600px) {
-
+@media (max-width: 768px) {
     .navbar {
-        flex-direction: column !important;
-        align-items: center !important;
-        gap: 12px !important;
-        padding: 12px 15px !important;
-    }
-
-    .logo {
-        font-size: 24px;
+        padding: 0 16px !important;
+        height: 60px !important;
     }
 
     .nav-links {
-        width: 100% !important;
-        justify-content: center !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
+        display: none !important;
     }
-
-    .nav-links a {
-        font-size: 13px;
-        padding: 7px 9px;
-    }
-
 }
-@media screen and (max-width: 600px) {
 
-    .navbar {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 12px !important;
-        padding: 12px 15px !important;
-    }
-
-    .nav-links {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        justify-content: center !important;
-        width: 100% !important;
-        gap: 8px !important;
-    }
-
-    .nav-links a {
-        font-size: 13px !important;
-        padding: 7px 9px !important;
-    }
-
+:root {
+    --stitch-primary: #53e076;
+    --stitch-primary-container: #1db954;
+    --stitch-bg: #131313;
+    --stitch-surface: #181818;
+    --stitch-surface-container: #201f1f;
+    --stitch-surface-container-high: #2a2a2a;
+    --stitch-surface-container-highest: #353534;
+    --stitch-on-surface: #e5e2e1;
+    --stitch-on-surface-variant: #bccbb9;
 }
-@media (max-width: 600px) {
 
-    .navbar {
-        display: flex;
-        flex-direction: row;
+.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+/* Scoped Homepage Stitch Dark Theme */
+body.stitch-theme {
+    background-color: #131313 !important;
+    color: #e5e2e1 !important;
+    padding: 0 !important;
+    padding-top: 70px !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+body.stitch-theme .song-card {
+    background-color: #201f1f !important;
+    color: #e5e2e1 !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    transition: all 0.25s ease !important;
+    box-sizing: border-box !important;
+}
+
+body.stitch-theme .song-card:hover {
+    background-color: #272727 !important;
+    border-color: rgba(29, 185, 84, 0.35) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.stitch-theme .song-title {
+    color: #e5e2e1 !important;
+    font-size: 1.125rem !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+    text-align: left !important;
+}
+
+body.stitch-theme .song-artist {
+    color: #53e076 !important;
+    font-weight: 600 !important;
+}
+
+body.stitch-theme .song-album {
+    color: #bccbb9 !important;
+}
+
+body.stitch-theme hr {
+    border: 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    margin: 1.5rem 0 !important;
+}
+
+/* Utilities */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+}
+
+.material-symbols-filled {
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+}
+
+/* Ensure all song names, headings, and titles are left-aligned */
+body.stitch-theme h1,
+body.stitch-theme h2,
+body.stitch-theme h3,
+body.stitch-theme h4,
+body.stitch-theme .song-title,
+body.stitch-theme .song-details h1,
+body.stitch-theme .song-details h2 {
+    text-align: left !important;
+}
+
+/* Ensure all playlist titles/names are strictly pure white */
+body.stitch-theme .playlist-card h2,
+body.stitch-theme .playlist-card .playlist-title,
+body.stitch-theme .playlist-card a,
+body.stitch-theme .playlist-card a h2,
+body.stitch-theme .playlist-card a:hover,
+body.stitch-theme .playlist-card a:hover h2,
+body.stitch-theme .playlist-card:hover h2,
+body.stitch-theme .playlist-title {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+/* ==========================================================================
+   MusicHub Unified Search Component (Home, Top Rated, Favorites)
+   ========================================================================== */
+
+.musichub-search-form,
+.musichub-search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: #201f1f !important; /* Dark charcoal */
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+    padding: 3px;
+}
+
+.musichub-search-form:hover,
+.musichub-search-bar:hover {
+    background-color: #252424 !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.musichub-search-form:focus-within,
+.musichub-search-bar:focus-within {
+    background-color: #222222 !important;
+    border-color: #53e076 !important; /* MusicHub Emerald Glow */
+    box-shadow: 0 0 0 2px rgba(83, 224, 118, 0.28), 0 0 24px rgba(29, 185, 84, 0.22) !important;
+}
+
+/* Inside search icon */
+.musichub-search-icon {
+    position: absolute;
+    left: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bccbb9; /* on-surface-variant */
+    pointer-events: none;
+    z-index: 2;
+    transition: color 0.2s ease;
+}
+
+.musichub-search-form:focus-within .musichub-search-icon,
+.musichub-search-bar:focus-within .musichub-search-icon {
+    color: #53e076;
+}
+
+/* Dark charcoal search input */
+.musichub-search-input {
+    width: 100% !important;
+    height: 48px !important;
+    padding-left: 48px !important;
+    padding-right: 175px !important;
+    background-color: transparent !important;
+    color: #ffffff !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    border-radius: 9999px !important;
+    font-size: 0.9375rem !important; /* 15px */
+    font-weight: 500 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    box-sizing: border-box !important;
+}
+
+.musichub-search-input::placeholder {
+    color: #869585 !important;
+    opacity: 1 !important;
+}
+
+/* Responsive right padding for mobile */
+@media (max-width: 640px) {
+    .musichub-search-input {
+        padding-right: 125px !important;
+        padding-left: 42px !important;
+        font-size: 0.875rem !important;
+        height: 44px !important;
+    }
+}
+
+/* Action controls cluster on the right */
+.musichub-search-actions {
+    position: absolute;
+    right: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
+}
+
+/* Clear button */
+.musichub-search-clear {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    color: #bccbb9;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+}
+
+.musichub-search-clear:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Live match count badge */
+.musichub-search-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    background-color: rgba(83, 224, 118, 0.15);
+    color: #53e076;
+    border: 1px solid rgba(83, 224, 118, 0.3);
+    white-space: nowrap;
+}
+
+/* Keyboard hint shortcut */
+.musichub-search-kbd {
+    display: none;
+}
+
+@media (min-width: 640px) {
+    .musichub-search-kbd {
+        display: inline-flex;
         align-items: center;
-        justify-content: space-between;
-
-        padding: 10px 12px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .logo {
-        font-size: 14px;
-        white-space: nowrap;
-    }
-
-    .nav-links {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        gap: 4px;
-    }
-
-    .nav-links a {
-        font-size: 9px;
-        padding: 5px 6px;
-        white-space: nowrap;
-    }
-
-}
-@media (max-width: 600px) {
-    .navbar {
-        flex-direction: row !important;
+        padding: 2px 7px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 10px;
+        color: rgba(188, 203, 185, 0.7);
+        background-color: #2a2a2a;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        pointer-events: none;
     }
 }
-/* FINAL MOBILE NAVBAR FIX */
-@media (max-width: 600px) {
 
-    .navbar {
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        justify-content: center !important;
-        gap: 8px !important;
-        padding: 10px !important;
-    }
+/* Green Search Button */
+.musichub-search-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 38px;
+    padding: 0 18px;
+    background-color: #1db954; /* Spotify / MusicHub Green */
+    color: #003914; /* Deep dark green contrast */
+    font-size: 0.8125rem; /* 13px */
+    font-weight: 700;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 0 14px rgba(29, 185, 84, 0.32);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+}
 
-    .navbar .logo {
-        width: 100%;
-        text-align: center;
-        margin-bottom: 5px;
-    }
+.musichub-search-btn:hover {
+    background-color: #1ed760;
+    box-shadow: 0 0 20px rgba(29, 185, 84, 0.55);
+    transform: scale(1.02);
+}
 
-    .nav-links {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        justify-content: center !important;
-        gap: 6px !important;
-        width: 100%;
-    }
+.musichub-search-btn:active {
+    transform: scale(0.97);
+}
 
-    .nav-links a {
-        font-size: 11px !important;
-        padding: 6px 8px !important;
-        white-space: nowrap;
+@media (max-width: 640px) {
+    .musichub-search-btn {
+        padding: 0 12px;
+        height: 34px;
+        font-size: 0.75rem;
     }
 }
+
+
+

@@ -5,44 +5,61 @@
 
 <div th:fragment="navbar">
 
-    <nav class="navbar">
+    <nav class="navbar" id="musichubNavbar">
 
-        <a href="/" class="logo">
-            🎵 MusicHub
+        <!-- Logo & Active Page Context -->
+        <a th:href="@{/}" class="logo">
+            <span class="logo-badge">
+                <span class="material-symbols-outlined logo-symbol">graphic_eq</span>
+            </span>
+            <span class="logo-text">MusicHub</span>
+            <span th:if="${activePage != null and !activePage.isEmpty()}" 
+                  class="nav-pill-badge" 
+                  th:text="${activePage == 'home' ? 'Library' : (activePage == 'playlists' ? 'Playlists' : (activePage == 'top-rated' ? 'Top Rated' : (activePage == 'analytics' ? 'Analytics' : (activePage == 'favorites' ? 'Favorites' : (activePage == 'add-song' ? 'Add Song' : (activePage == 'song-details' ? 'Song Details' : activePage))))))}">
+            </span>
         </a>
-<div class="nav-links">
 
-    <a th:href="@{/}"
-       th:classappend="${activePage == 'home'} ? 'active-nav' : ''">
-        🏠 Home
-    </a>
+        <!-- Desktop Navigation Links -->
+        <div class="nav-links">
 
-    <a th:href="@{/playlists}"
-       th:classappend="${activePage == 'playlists'} ? 'active-nav' : ''">
-        🎵 Playlists
-    </a>
+            <a th:href="@{/}"
+               th:classappend="${activePage == 'home'} ? 'active-nav' : ''">
+                <span class="material-symbols-outlined nav-icon" th:style="${activePage == 'home'} ? 'font-variation-settings: \'FILL\' 1;' : ''">home</span>
+                <span>Home</span>
+            </a>
 
-    <a th:href="@{/top-rated}"
-       th:classappend="${activePage == 'top-rated'} ? 'active-nav' : ''">
-        ⭐ Top Rated
-    </a>
+            <a th:href="@{/playlists}"
+               th:classappend="${activePage == 'playlists'} ? 'active-nav' : ''">
+                <span class="material-symbols-outlined nav-icon" th:style="${activePage == 'playlists'} ? 'font-variation-settings: \'FILL\' 1;' : ''">queue_music</span>
+                <span>Playlists</span>
+            </a>
 
-    <a th:href="@{/analytics}"
-   th:classappend="${activePage == 'analytics'} ? 'active-nav' : ''">
-    📊 Analytics
-</a>
+            <a th:href="@{/top-rated}"
+               th:classappend="${activePage == 'top-rated'} ? 'active-nav' : ''">
+                <span class="material-symbols-outlined nav-icon" th:style="${activePage == 'top-rated'} ? 'font-variation-settings: \'FILL\' 1;' : ''">star</span>
+                <span>Top Rated</span>
+            </a>
 
-    <a th:href="@{/favorites}"
-       th:classappend="${activePage == 'favorites'} ? 'active-nav' : ''">
-        ❤️ Favorites
-    </a>
+            <a th:href="@{/analytics}"
+               th:classappend="${activePage == 'analytics'} ? 'active-nav' : ''">
+                <span class="material-symbols-outlined nav-icon" th:style="${activePage == 'analytics'} ? 'font-variation-settings: \'FILL\' 1;' : ''">insights</span>
+                <span>Analytics</span>
+            </a>
 
-    <a th:href="@{/add-song}"
-       th:classappend="${activePage == 'add-song'} ? 'active-nav' : ''">
-        ➕ Add Song
-    </a>
+            <a th:href="@{/favorites}"
+               th:classappend="${activePage == 'favorites'} ? 'active-nav' : ''">
+                <span class="material-symbols-outlined nav-icon" th:style="${activePage == 'favorites'} ? 'font-variation-settings: \'FILL\' 1;' : ''">favorite</span>
+                <span>Favorites</span>
+            </a>
 
-</div>
+            <a th:href="@{/add-song}"
+               th:classappend="${activePage == 'add-song'} ? 'active-nav' : ''"
+               class="nav-add-btn">
+                <span class="material-symbols-outlined nav-icon">add_circle</span>
+                <span>Add Song</span>
+            </a>
+
+        </div>
 
     </nav>
 

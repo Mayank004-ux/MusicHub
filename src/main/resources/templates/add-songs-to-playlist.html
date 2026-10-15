@@ -1,64 +1,208 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-
-    <title>Add Songs</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Add Songs to ' + ${playlist.name} + ' | MusicHub'">Add Songs to Playlist | MusicHub</title>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS with Stitch Design Tokens -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#53e076",
+                        "primary-container": "#1db954",
+                        "on-primary": "#003914",
+                        "on-primary-container": "#004118",
+                        "secondary": "#3de96f",
+                        "background": "#131313",
+                        "surface": "#131313",
+                        "surface-container": "#201f1f",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "on-surface-variant": "#bccbb9"
+                    }
+                }
+            }
+        };
+    </script>
     <link rel="stylesheet" th:href="@{/style.css}">
-
+    <style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+    </style>
 </head>
+<body class="stitch-theme bg-background text-on-surface antialiased min-h-screen">
 
-<body>
-
-<h1>Add Songs to Playlist</h1>
-
-<h2 th:text="${playlist.name}"></h2>
-
-<form th:action="@{/playlist/{id}/add-songs(id=${playlist.id})}"
-      method="post">
-
-    <div th:each="song : ${songs}">
-
-        <label>
-
-            <input type="checkbox"
-                   name="songIds"
-                   th:value="${song.id}">
-
-            <span th:text="${song.title}"></span>
-
-            -
-
-            <span th:text="${song.artist}"></span>
-
-        </label>
-
-        <br><br>
-
+    <!-- Top Navigation Fragment -->
+    <div th:with="activePage='playlists'">
+        <div th:replace="~{navbar :: navbar}"></div>
     </div>
 
-    <button type="submit"
-            class="add-btn">
+    <!-- Main Content Container -->
+    <main class="w-full min-h-screen pt-4 pb-28 px-4 sm:px-6 md:px-8 max-w-4xl mx-auto flex flex-col space-y-6">
 
-        Save Songs
+        <!-- Top Breadcrumb -->
+        <div class="flex items-center justify-between text-xs text-on-surface-variant">
+            <a th:href="@{/playlist/{id}(id=${playlist.id})}" class="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                <span>Back to <span th:text="${playlist.name}"></span></span>
+            </a>
+            <span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-medium">
+                Playlist Ingestion
+            </span>
+        </div>
 
-    </button>
+        <!-- Header Card -->
+        <section class="rounded-2xl bg-surface-container p-6 shadow-xl border border-white/10 text-left relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-44 h-44 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
 
-</form>
+            <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_16px_rgba(29,185,84,0.35)] flex-shrink-0">
+                        <span class="material-symbols-outlined text-[26px]">playlist_add</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-white tracking-tight">Add Songs to Playlist</h1>
+                        <p class="text-xs text-on-surface-variant mt-0.5">
+                            Target playlist: <strong class="text-primary font-bold" th:text="${playlist.name}"></strong>
+                        </p>
+                    </div>
+                </div>
 
-<br>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="toggleSelectAll()" class="px-3.5 py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-xs text-white font-medium border border-white/5 transition-all">
+                        Select All
+                    </button>
+                    <button type="button" onclick="clearAllSelections()" class="px-3.5 py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-xs text-on-surface-variant hover:text-white font-medium border border-white/5 transition-all">
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </section>
 
-<a th:href="@{/playlist/{id}(id=${playlist.id})}">
+        <!-- Selection Form -->
+        <form th:action="@{/playlist/{id}/add-songs(id=${playlist.id})}" method="post" class="space-y-4 text-left">
 
-    <button>
+            <!-- Empty state if songs empty -->
+            <div th:if="${#lists.isEmpty(songs)}" class="p-8 rounded-2xl bg-surface-container text-center border border-white/5 text-on-surface-variant text-sm">
+                No songs available in your library. <a th:href="@{/song/add}" class="text-primary underline font-semibold">Add songs first</a>.
+            </div>
 
-        Back
+            <!-- Songs Grid List -->
+            <div th:unless="${#lists.isEmpty(songs)}" class="space-y-2">
+                <label th:each="song : ${songs}" 
+                       class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-all border border-white/5 cursor-pointer group">
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <!-- Custom Styled Checkbox -->
+                        <input type="checkbox"
+                               name="songIds"
+                               th:value="${song.id}"
+                               class="song-checkbox w-5 h-5 rounded-md border-white/20 bg-surface-container-highest text-primary focus:ring-primary focus:ring-offset-surface cursor-pointer" />
 
-    </button>
+                        <!-- Cover / Disc -->
+                        <div class="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-surface-container-high shrink-0 shadow-sm relative">
+                            <img th:if="${song.imageUrl != null and !#strings.isEmpty(song.imageUrl)}"
+                                 th:src="${song.imageUrl}"
+                                 alt="Cover"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                            <span th:class="${'material-symbols-outlined text-primary text-[20px]' + (song.imageUrl != null and !#strings.isEmpty(song.imageUrl) ? ' hidden' : '')}">music_note</span>
+                        </div>
 
-</a>
+                        <!-- Song Info -->
+                        <div class="min-w-0">
+                            <span class="text-sm font-bold text-white block truncate group-hover:text-primary transition-colors"
+                                  style="color: #ffffff !important;"
+                                  th:text="${song.title}">Song Title</span>
+                            <span class="text-xs text-on-surface-variant block truncate">
+                                <span class="text-primary" th:text="${song.artist}">Artist</span>
+                                <span th:if="${song.album != null}"> &bull; <span th:text="${song.album}"></span></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span th:if="${song.genre != null and !#strings.isEmpty(song.genre)}" 
+                              class="text-[11px] px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-medium border border-white/5 hidden sm:inline"
+                              th:text="${song.genre}">Genre</span>
+                        <div th:if="${song.rating != null}" class="flex items-center text-amber-400 text-xs">
+                            <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span th:text="${song.rating}">5</span>
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Sticky Save Actions Bar -->
+            <div class="sticky bottom-20 z-40 p-4 rounded-2xl bg-surface-container/95 backdrop-blur-xl border border-white/10 shadow-2xl flex items-center justify-between">
+                <span class="text-xs text-on-surface-variant">
+                    Ready to append selected tracks to <strong class="text-white" th:text="${playlist.name}"></strong>
+                </span>
+
+                <div class="flex items-center gap-3">
+                    <a th:href="@{/playlist/{id}(id=${playlist.id})}"
+                       class="px-4 py-2 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-xs text-on-surface-variant hover:text-white font-semibold transition-all">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 rounded-full bg-primary-container hover:bg-[#1ed760] text-[#003914] font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-[0_0_16px_rgba(29,185,84,0.35)] active:scale-95 transition-all">
+                        <span class="material-symbols-outlined text-[18px]">save</span>
+                        <span>Save Songs to Playlist</span>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+    </main>
+
+    <!-- Docked Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
+        <div class="h-16 px-4 flex items-center justify-between max-w-md mx-auto">
+            <a th:href="@{/}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">home</span>
+                <span class="text-[11px]">Home</span>
+            </a>
+            <a th:href="@{/playlists}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-primary font-bold transition-colors">
+                <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">queue_music</span>
+                <span class="text-[11px]">Playlists</span>
+            </a>
+            <div class="flex-1 flex items-center justify-center">
+                <a th:href="@{/song/add}" aria-label="Add Song" class="w-11 h-11 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(29,185,84,0.45)] hover:scale-105 active:scale-95 transition-transform" title="Add New Song">
+                    <span class="material-symbols-outlined text-[26px]">add</span>
+                </a>
+            </div>
+            <a th:href="@{/favorites}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">favorite</span>
+                <span class="text-[11px]">Favorites</span>
+            </a>
+            <a th:href="@{/analytics}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">insights</span>
+                <span class="text-[11px]">Analytics</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        function toggleSelectAll() {
+            const boxes = document.querySelectorAll('.song-checkbox');
+            const allChecked = Array.from(boxes).every(b => b.checked);
+            boxes.forEach(b => b.checked = !allChecked);
+        }
+        function clearAllSelections() {
+            document.querySelectorAll('.song-checkbox').forEach(b => b.checked = false);
+        }
+    </script>
 
 </body>
-
 </html>

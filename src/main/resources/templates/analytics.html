@@ -1,316 +1,596 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-
-    <title>Analytics | MusicHub</title>
-
-    <link rel="stylesheet" th:href="@{/style.css}">
-
-</head>
-
-<body>
-
-<div th:replace="~{navbar :: navbar}"></div>
-
-<div class="analytics-container">
-
-    <h1>📊 Music Analytics</h1>
-
-    <p class="analytics-subtitle">
-        View insights about your music collection.
-    </p>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog Analytics | MusicHub</title>
     
-     <hr>
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS with Stitch Design Tokens -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#53e076",
+                        "primary-container": "#1db954",
+                        "on-primary": "#003914",
+                        "on-primary-container": "#004118",
+                        "secondary": "#3de96f",
+                        "secondary-container": "#00cc57",
+                        "secondary-fixed": "#69ff89",
+                        "background": "#131313",
+                        "surface": "#131313",
+                        "surface-dim": "#131313",
+                        "surface-bright": "#393939",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container": "#201f1f",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "on-surface-variant": "#bccbb9",
+                        "outline": "#869585",
+                        "outline-variant": "#3d4a3d",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "tertiary": "#a7c8ff",
+                        "tertiary-container": "#61a2fe"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "space-xl": "2.5rem",
+                        "gutter-mobile": "1rem",
+                        "space-md": "1rem",
+                        "space-sm": "0.5rem",
+                        "space-lg": "1.5rem",
+                        "space-xs": "0.25rem",
+                        "margin": "2rem"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <link rel="stylesheet" th:href="@{/style.css}">
+    
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 16px);
+        }
+        .material-symbols-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="stitch-theme bg-background text-on-surface antialiased min-h-screen">
 
-<h2>✨ Quick Insights</h2>
+    <!-- Top Navigation Fragment (Preserved) -->
+    <div th:replace="~{navbar :: navbar}"></div>
 
-<div class="dashboard">
+    <!-- Main Content Container -->
+    <main class="w-full min-h-screen pt-4 pb-28 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto flex flex-col space-y-6">
 
-    <div class="dashboard-card">
-
-        <h2>🏆</h2>
-
-        <h3 th:text="${highestRatedSong != null ? highestRatedSong.title : 'N/A'}"></h3>
-
-        <p>Highest Rated Song</p>
-
-    </div>
-
-    <div class="dashboard-card">
-
-        <h2>🆕</h2>
-
-        <h3 th:text="${latestSong != null ? latestSong.title : 'N/A'}"></h3>
-
-        <p>Latest Song</p>
-
-    </div>
-
-    <div class="dashboard-card">
-
-        <h2>❤️</h2>
-
-        <h3 th:text="${favoritePercentage + '%'}"></h3>
-
-        <p>Favorite Percentage</p>
-
-    </div>
-
-    <div class="dashboard-card">
-
-        <h2>🎼</h2>
-
-        <h3 th:text="${popularGenre}"></h3>
-
-        <p>Most Popular Genre</p>
-
-    </div>
-
-</div>
-
-<hr>
-
-    <br>
-
-    <a href="/">
-        <button class="home-btn">
-            🏠 Back to Home
-        </button>
-    </a>
-
-    <hr>
-
-    <!-- Dashboard -->
-
-    <div class="dashboard">
-
-        <div class="dashboard-card">
-            <h2>🎵</h2>
-            <h3 th:text="${totalSongs}"></h3>
-            <p>Total Songs</p>
+        <!-- Top Breadcrumb & Actions -->
+        <div class="flex items-center justify-between text-xs text-on-surface-variant">
+            <a th:href="@{/}" class="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                <span>Back to Library</span>
+            </a>
+            <span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-medium">
+                Live Telemetry
+            </span>
         </div>
 
-        <div class="dashboard-card">
-            <h2>❤️</h2>
-            <h3 th:text="${favoriteSongs}"></h3>
-            <p>Favorites</p>
+        <!-- 1. Catalog Analytics Header Banner (Stitch Design) -->
+        <section class="relative overflow-hidden rounded-2xl bg-surface-container-low p-5 sm:p-6 shadow-xl border border-white/5 text-left">
+            <!-- Ambient emerald atmospheric glow -->
+            <div class="absolute -right-10 -top-10 w-52 h-52 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-primary-container/10 blur-2xl pointer-events-none"></div>
+
+            <div class="relative z-10 flex flex-col space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-primary text-xs font-bold border border-primary/20 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                        Synced with PostgreSQL DB
+                    </span>
+
+                    <button type="button" 
+                            id="refreshMetricsBtn"
+                            aria-label="Refresh library metrics" 
+                            onclick="refreshDashboard()"
+                            class="p-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary active:scale-95 transition-all" 
+                            title="Refresh Metrics">
+                        <span class="material-symbols-outlined text-[20px]">sync</span>
+                    </button>
+                </div>
+
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight text-left">
+                        Catalog Analytics
+                    </h1>
+                    <p class="text-xs sm:text-sm text-on-surface-variant mt-1 leading-relaxed text-left max-w-2xl">
+                        Real-time metrics, genre breakdowns, and collection insights from your PostgreSQL library.
+                    </p>
+                </div>
+
+                <div class="flex items-center justify-between pt-1 border-t border-white/5 flex-wrap gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-medium border border-white/5">
+                            All-Time Library Data
+                        </span>
+                        <span th:if="${popularGenre != null and !popularGenre.isEmpty()}" 
+                              class="text-xs px-2.5 py-1 rounded-full bg-surface-container text-primary font-medium border border-primary/20">
+                            Leading: <strong class="text-white" th:text="${popularGenre}"></strong>
+                        </span>
+                    </div>
+
+                    <button type="button"
+                            onclick="exportAnalyticsCSV()"
+                            class="inline-flex items-center gap-1.5 text-xs text-primary hover:text-white font-semibold transition-colors">
+                        <span class="material-symbols-outlined text-[16px]">file_download</span>
+                        <span>Export CSV</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Key Metrics Bento Grid -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <!-- Total Songs (Spans 2 columns on small screens, full on row) -->
+            <div class="col-span-2 rounded-xl bg-surface-container p-4 sm:p-5 relative overflow-hidden shadow-sm border border-white/5 text-left flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined text-[20px]">library_music</span>
+                        </div>
+                        <span class="text-xs text-on-surface-variant font-semibold">Total Songs</span>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-primary text-xs font-bold px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20">
+                        <span class="material-symbols-outlined text-[14px]">favorite</span>
+                        <span th:text="${favoritePercentage + '% Favs'}">0% Favs</span>
+                    </span>
+                </div>
+
+                <div class="flex items-baseline justify-between mt-1">
+                    <span class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" 
+                          th:text="${totalSongs}">0</span>
+                    <span class="text-xs text-on-surface-variant" 
+                          th:text="${favoriteDuration != null ? favoriteDuration + ' saved' : ''}"></span>
+                </div>
+
+                <!-- Progress visual micro bar -->
+                <div class="w-full bg-surface-container-high h-1.5 rounded-full mt-3.5 overflow-hidden">
+                    <div class="bg-primary h-full rounded-full shadow-[0_0_12px_rgba(83,224,118,0.5)] transition-all duration-500" 
+                         th:style="'width: ' + (${favoritePercentage != null ? favoritePercentage : '0'}) + '%;'"></div>
+                </div>
+            </div>
+
+            <!-- Total Artists -->
+            <div class="rounded-xl bg-surface-container p-4 shadow-sm border border-white/5 text-left flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-on-surface-variant font-semibold">Total Artists</span>
+                    <div class="w-7 h-7 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined text-[16px]">mic</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-xl sm:text-2xl font-bold text-white tracking-tight" 
+                          th:text="${totalArtists}">0</span>
+                    <p class="text-[11px] text-on-surface-variant mt-0.5" 
+                       th:text="(${artistStatistics != null ? artistStatistics.size() : 0}) + ' ranked artists'">0 artists</p>
+                </div>
+            </div>
+
+            <!-- Total Albums -->
+            <div class="rounded-xl bg-surface-container p-4 shadow-sm border border-white/5 text-left flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-on-surface-variant font-semibold">Total Albums</span>
+                    <div class="w-7 h-7 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary">
+                        <span class="material-symbols-outlined text-[16px]">album</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-xl sm:text-2xl font-bold text-white tracking-tight" 
+                          th:text="${totalAlbums}">0</span>
+                    <p class="text-[11px] text-on-surface-variant mt-0.5">Albums cataloged</p>
+                </div>
+            </div>
+
+            <!-- Total Genres -->
+            <div class="rounded-xl bg-surface-container p-4 shadow-sm border border-white/5 text-left flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-on-surface-variant font-semibold">Total Genres</span>
+                    <div class="w-7 h-7 rounded-lg bg-surface-container-high flex items-center justify-center text-tertiary">
+                        <span class="material-symbols-outlined text-[16px]">category</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-xl sm:text-2xl font-bold text-white tracking-tight" 
+                          th:text="${totalGenres}">0</span>
+                    <p class="text-[11px] text-on-surface-variant mt-0.5 truncate" 
+                       th:text="'Top: ' + (${popularGenre != null ? popularGenre : 'N/A'})">Top Genre</p>
+                </div>
+            </div>
+
+            <!-- Average Rating -->
+            <div class="rounded-xl bg-surface-container p-4 shadow-sm border border-white/5 text-left flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-on-surface-variant font-semibold">Average Rating</span>
+                    <div class="w-7 h-7 rounded-lg bg-surface-container-high flex items-center justify-center text-amber-400">
+                        <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-xl sm:text-2xl font-bold text-white tracking-tight" 
+                              th:text="${averageRating != null ? #numbers.formatDecimal(averageRating, 1, 1) : '0.0'}">0.0</span>
+                        <span class="text-xs text-on-surface-variant">/ 5.0</span>
+                    </div>
+                    <p class="text-[11px] text-on-surface-variant mt-0.5"
+                       th:text="'Favs: ' + (${favoriteAverageRating != null ? #numbers.formatDecimal(favoriteAverageRating, 1, 1) : '0.0'}) + ' ⭐'">Fav Avg</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Quick Insights Highlight Cards -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <!-- Highest Rated Song -->
+            <div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors border border-white/5 text-left flex items-start gap-3">
+                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-amber-400 flex-shrink-0 text-lg">
+                    🏆
+                </div>
+                <div class="min-w-0 flex-1">
+                    <span class="text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">Highest Rated Track</span>
+                    <h3 class="text-sm font-bold text-white truncate mt-0.5" 
+                        th:text="${highestRatedSong != null ? highestRatedSong.title : 'N/A'}">Song Title</h3>
+                    <p class="text-[11px] text-primary truncate" 
+                       th:text="${highestRatedSong != null ? highestRatedSong.artist + ' (' + highestRatedSong.rating + '★)' : ''}"></p>
+                </div>
+            </div>
+
+            <!-- Latest Song Added -->
+            <div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors border border-white/5 text-left flex items-start gap-3">
+                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0 text-lg">
+                    🆕
+                </div>
+                <div class="min-w-0 flex-1">
+                    <span class="text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">Latest Ingested Song</span>
+                    <h3 class="text-sm font-bold text-white truncate mt-0.5" 
+                        th:text="${latestSong != null ? latestSong.title : 'N/A'}">Song Title</h3>
+                    <p class="text-[11px] text-on-surface-variant truncate" 
+                       th:text="${latestSong != null ? latestSong.artist : ''}"></p>
+                </div>
+            </div>
+
+            <!-- Favorite Percentage -->
+            <div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors border border-white/5 text-left flex items-start gap-3">
+                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0 text-lg">
+                    ❤️
+                </div>
+                <div class="min-w-0 flex-1">
+                    <span class="text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">Favorite Ratio</span>
+                    <h3 class="text-sm font-bold text-white truncate mt-0.5" 
+                        th:text="${favoritePercentage + '%'}">0%</h3>
+                    <p class="text-[11px] text-on-surface-variant truncate" 
+                       th:text="${favoriteSongs != null ? favoriteSongs + ' songs starred' : ''}">0 songs starred</p>
+                </div>
+            </div>
+
+            <!-- Most Popular Genre -->
+            <div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors border border-white/5 text-left flex items-start gap-3">
+                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0 text-lg">
+                    🎼
+                </div>
+                <div class="min-w-0 flex-1">
+                    <span class="text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">Top Genre</span>
+                    <h3 class="text-sm font-bold text-white truncate mt-0.5" 
+                        th:text="${popularGenre != null ? popularGenre : 'N/A'}">Genre</h3>
+                    <p class="text-[11px] text-primary truncate">Highest Track Density</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Breakdown Charts Row (Genre Breakdown & Artist Leaderboard) -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+            <!-- Chart 1: Songs by Genre Breakdown -->
+            <div class="rounded-2xl bg-surface-container p-5 shadow-md border border-white/5 space-y-4 text-left">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">Songs by Genre</h2>
+                        <p class="text-xs text-on-surface-variant mt-0.5">Top catalog categories</p>
+                    </div>
+                    <span class="text-xs px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-medium"
+                          th:text="(${genreStatistics != null ? genreStatistics.size() : 0}) + ' Clusters'">
+                        Clusters
+                    </span>
+                </div>
+
+                <!-- Empty state if no genre data -->
+                <div th:if="${genreStatistics == null or genreStatistics.isEmpty()}" class="py-8 text-center text-xs text-on-surface-variant">
+                    No genre statistics available.
+                </div>
+
+                <!-- Genre Horizontal Distribution Bars -->
+                <div th:unless="${genreStatistics == null or genreStatistics.isEmpty()}" class="space-y-3 pt-1">
+                    <div th:each="entry, iterStat : ${genreStatistics}" class="space-y-1.5">
+                        <div class="flex justify-between items-center text-xs">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span th:class="${'w-2.5 h-2.5 rounded-full shrink-0 ' + (iterStat.index % 4 == 0 ? 'bg-primary' : (iterStat.index % 4 == 1 ? 'bg-tertiary' : (iterStat.index % 4 == 2 ? 'bg-secondary-fixed' : 'bg-amber-400')))}"></span>
+                                <span class="text-white font-semibold truncate" th:text="${entry.key}">Genre Name</span>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-on-surface-variant" th:text="${entry.value} + ' tracks'">0 tracks</span>
+                                <span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-bold text-[11px]"
+                                      th:text="${totalSongs != null and totalSongs > 0 ? #numbers.formatDecimal((entry.value * 100.0) / totalSongs, 1, 1) + '%' : '0%'}">
+                                    0%
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+                            <div th:class="${'h-full rounded-full transition-all duration-500 ' + (iterStat.index % 4 == 0 ? 'bg-primary shadow-[0_0_8px_rgba(83,224,118,0.4)]' : (iterStat.index % 4 == 1 ? 'bg-tertiary' : (iterStat.index % 4 == 2 ? 'bg-secondary-fixed' : 'bg-amber-400')))}"
+                                 th:style="'width: ' + (${totalSongs != null and totalSongs > 0 ? (entry.value * 100.0) / totalSongs : 0}) + '%;'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart 2: Top Artists Leaderboard -->
+            <div class="rounded-2xl bg-surface-container p-5 shadow-md border border-white/5 space-y-4 text-left">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">Top Artists</h2>
+                        <p class="text-xs text-on-surface-variant mt-0.5">Highest track presence in library</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined text-[18px]">leaderboard</span>
+                    </div>
+                </div>
+
+                <!-- Empty state if no artist data -->
+                <div th:if="${artistStatistics == null or artistStatistics.isEmpty()}" class="py-8 text-center text-xs text-on-surface-variant">
+                    No artist statistics available.
+                </div>
+
+                <!-- Artist Leaderboard Items -->
+                <div th:unless="${artistStatistics == null or artistStatistics.isEmpty()}" class="space-y-3 pt-1">
+                    <div th:each="entry, iterStat : ${artistStatistics}" class="space-y-1.5">
+                        <div class="flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-6 h-6 rounded-full bg-surface-container-high text-primary flex items-center justify-center text-[10px] font-bold shrink-0 border border-white/5"
+                                     th:text="${#strings.substring(entry.key, 0, 1)}">
+                                    A
+                                </div>
+                                <span class="text-white font-semibold truncate" th:text="${entry.key}">Artist Name</span>
+                            </div>
+                            <span class="text-primary font-bold shrink-0" th:text="${entry.value} + ' songs'">0 songs</span>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+                            <div class="h-full bg-primary rounded-full shadow-[0_0_8px_rgba(83,224,118,0.35)] transition-all duration-500"
+                                 th:style="'width: ' + (${totalSongs != null and totalSongs > 0 ? (entry.value * 100.0) / totalSongs : 0}) + '%;'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 5. Favorite Languages Breakdown Section -->
+        <section th:if="${languageStats != null and !languageStats.isEmpty()}" 
+                 class="rounded-2xl bg-surface-container p-5 shadow-md border border-white/5 space-y-3 text-left">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">Favorite Tracks by Language</h2>
+                    <p class="text-xs text-on-surface-variant mt-0.5">Linguistic dispersion across starred tracks</p>
+                </div>
+                <span class="material-symbols-outlined text-primary text-[20px]">translate</span>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2">
+                <div th:each="entry : ${languageStats}" 
+                     class="p-3 rounded-xl bg-surface-container-high border border-white/5 flex items-center justify-between">
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-xs text-on-surface-variant font-medium" th:text="${entry.key}">Language</span>
+                        <span class="text-sm font-bold text-white mt-0.5" th:text="${entry.value} + ' songs'">0 songs</span>
+                    </div>
+                    <span class="material-symbols-outlined text-primary text-[18px]">public</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Recently Cataloged Songs Timeline (Stitch Design) -->
+        <section class="space-y-3 text-left">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">Recently Cataloged</h2>
+                    <p class="text-xs text-on-surface-variant">Live ingest stream from library</p>
+                </div>
+                <a th:href="@{/}" class="text-xs text-primary hover:underline font-semibold flex items-center gap-1">
+                    <span>View All Songs</span>
+                    <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </a>
+            </div>
+
+            <!-- Empty state -->
+            <div th:if="${#lists.isEmpty(recentSongs)}" class="p-6 rounded-xl bg-surface-container text-center text-xs text-on-surface-variant border border-white/5">
+                No recently added songs found.
+            </div>
+
+            <!-- Recent tracks list -->
+            <div th:unless="${#lists.isEmpty(recentSongs)}" class="flex flex-col space-y-2">
+                <article th:each="song, iterStat : ${recentSongs}" 
+                         class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors border border-white/5">
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <!-- Cover / Disc -->
+                        <div class="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-surface-container-high shrink-0 shadow-sm">
+                            <img th:if="${song.imageUrl != null and !#strings.isEmpty(song.imageUrl)}"
+                                 th:src="${song.imageUrl}"
+                                 alt="Cover"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                            <span th:class="${'material-symbols-outlined text-primary text-[20px]' + (song.imageUrl != null and !#strings.isEmpty(song.imageUrl) ? ' hidden' : '')}">music_note</span>
+                        </div>
+
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <a th:href="@{/song/{id}(id=${song.id})}" class="block truncate">
+                                    <h3 class="text-sm text-white font-bold truncate hover:text-primary transition-colors text-left" 
+                                        style="color: #ffffff !important;"
+                                        th:text="${song.title}">
+                                        Song Title
+                                    </h3>
+                                </a>
+                                <span th:if="${iterStat.index == 0}" class="px-1.5 py-0.2 rounded bg-primary text-[#003914] text-[10px] font-extrabold uppercase">
+                                    NEW
+                                </span>
+                            </div>
+                            <p class="text-xs text-on-surface-variant truncate mt-0.5 text-left">
+                                <span th:text="${song.artist}">Artist</span> &bull; 
+                                <span th:text="${song.album}">Album</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span th:if="${song.genre != null and !#strings.isEmpty(song.genre)}" 
+                              class="text-[11px] px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-medium border border-white/5"
+                              th:text="${song.genre}">
+                            Genre
+                        </span>
+                        
+                        <a th:href="@{/song/{id}(id=${song.id})}" 
+                           aria-label="View song details"
+                           class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-bright transition-colors"
+                           title="Song Details">
+                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                        </a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- 7. Database & Server Diagnostics Footer Badge (Stitch Design) -->
+        <div class="p-3.5 rounded-xl bg-surface-container-low border border-white/5 flex items-center justify-between text-on-surface-variant text-xs font-medium">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[16px] text-primary">database</span>
+                <span>PostgreSQL &bull; Spring Data JPA &bull; MusicHub Core Engine</span>
+            </div>
+            <span class="text-primary font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                <span>Operational</span>
+            </span>
         </div>
 
-        <div class="dashboard-card">
-            <h2>🎤</h2>
-            <h3 th:text="${totalArtists}"></h3>
-            <p>Artists</p>
-        </div>
+    </main>
 
-        <div class="dashboard-card">
-            <h2>🎼</h2>
-            <h3 th:text="${totalGenres}"></h3>
-            <p>Genres</p>
-        </div>
-
-        <div class="dashboard-card">
-            <h2>💿</h2>
-            <h3 th:text="${totalAlbums}"></h3>
-            <p>Albums</p>
-        </div>
-
-        <div class="dashboard-card">
-            <h2>⭐</h2>
-            <h3 th:text="${averageRating}"></h3>
-            <p>Average Rating</p>
-        </div>
-
-    </div>
-
-    <hr>
-
-    <!-- Recently Added Songs -->
-
-    <h2>🆕 Recently Added Songs</h2>
-
-    <div th:if="${#lists.isEmpty(recentSongs)}">
-
-    <p>No recently added songs.</p>
-
-</div>
-
-<div class="recent-songs"
-     th:unless="${#lists.isEmpty(recentSongs)}">
-
-        <div class="song-card"
-             th:each="song : ${recentSongs}">
-
-            <img
-                    th:src="${song.imageUrl}"
-                    class="album-cover"
-                    alt="Album Cover">
-
-            <h3 th:text="${song.title}"></h3>
-
-            <p>
-                👤
-                <span th:text="${song.artist}"></span>
-            </p>
-
-            <p>
-                💿
-                <span th:text="${song.album}"></span>
-            </p>
-
-            <a th:href="@{/song/{id}(id=${song.id})}">
-                <button class="details-btn">
-                    Details
-                </button>
+    <!-- Docked Bottom Navigation Bar (Stitch Design) -->
+    <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
+        <div class="h-16 px-4 flex items-center justify-between max-w-md mx-auto">
+            <!-- Home -->
+            <a th:href="@{/}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">home</span>
+                <span class="text-[11px]">Home</span>
             </a>
 
+            <!-- Playlists -->
+            <a th:href="@{/playlists}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">queue_music</span>
+                <span class="text-[11px]">Playlists</span>
+            </a>
+
+            <!-- Center Action Button: Add Song -->
+            <div class="flex-1 flex items-center justify-center">
+                <a th:href="@{/song/add}" 
+                   aria-label="Add Song" 
+                   class="w-11 h-11 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(29,185,84,0.45)] hover:scale-105 active:scale-95 transition-transform"
+                   title="Add New Song">
+                    <span class="material-symbols-outlined text-[26px]">add</span>
+                </a>
+            </div>
+
+            <!-- Favorites -->
+            <a th:href="@{/favorites}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">favorite</span>
+                <span class="text-[11px]">Favorites</span>
+            </a>
+
+            <!-- Analytics (Active highlighted) -->
+            <a th:href="@{/analytics}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-primary font-bold transition-colors">
+                <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">insights</span>
+                <span class="text-[11px]">Analytics</span>
+            </a>
         </div>
-
-    </div>
-
-    <hr>
-
-    <!-- Favorite Statistics -->
-
-    <h2>❤️ Favorite Statistics</h2>
-
-    <div class="dashboard">
-
-        <div class="dashboard-card">
-
-            <h2>❤️</h2>
-
-            <h3 th:text="${favoriteSongs}"></h3>
-
-            <p>Total Favorites</p>
-
-        </div>
-
-        <div class="dashboard-card">
-
-            <h2>⭐</h2>
-
-            <h3 th:text="${favoriteAverageRating}"></h3>
-
-            <p>Average Rating</p>
-
-        </div>
-
-        <div class="dashboard-card">
-
-            <h2>⏱</h2>
-
-            <h3 th:text="${favoriteDuration}"></h3>
-
-            <p>Total Duration</p>
-
-        </div>
-
-    </div>
-
-    <hr>
-
-    <!-- Language Statistics -->
-
-    <h2>🌍 Favorite Songs by Language</h2>
-
-    <div th:if="${languageStats.isEmpty()}">
-
-        <p>No favorite songs available.</p>
-
-    </div>
-
-    <table
-            th:unless="${languageStats.isEmpty()}"
-            class="analytics-table">
-
-        <tr>
-            <th>Language</th>
-            <th>Favorite Songs</th>
-        </tr>
-
-        <tr th:each="entry : ${languageStats}">
-
-            <td th:text="${entry.key}"></td>
-
-            <td th:text="${entry.value}"></td>
-
-        </tr>
-
-    </table>
-
-    <hr>
-
-    <!-- Genre Statistics -->
-
-    <h2>🎼 Songs by Genre</h2>
-
-    <div th:if="${genreStatistics.isEmpty()}">
-
-        <p>No songs available.</p>
-
-    </div>
-
-    <table
-            th:unless="${genreStatistics.isEmpty()}"
-            class="analytics-table">
-
-        <tr>
-            <th>Genre</th>
-            <th>Total Songs</th>
-        </tr>
-
-        <tr th:each="entry : ${genreStatistics}">
-
-            <td th:text="${entry.key}"></td>
-
-            <td th:text="${entry.value}"></td>
-
-        </tr>
-
-    </table>
-
-    <hr>
-
-    <!-- Artist Statistics -->
-
-    <h2>🎤 Songs by Artist</h2>
-
-    <div th:if="${artistStatistics.isEmpty()}">
-
-        <p>No artists available.</p>
-
-    </div>
-
-    <table
-            th:unless="${artistStatistics.isEmpty()}"
-            class="analytics-table">
-
-        <tr>
-            <th>Artist</th>
-            <th>Total Songs</th>
-        </tr>
-
-        <tr th:each="entry : ${artistStatistics}">
-
-            <td th:text="${entry.key}"></td>
-
-            <td th:text="${entry.value}"></td>
-
-        </tr>
-
-    </table>
-
-    <br><br>
-
-    <a href="/">
-        <button class="home-btn">
-            🏠 Back to Home
-        </button>
-    </a>
-
-</div>
-
+    </nav>
+
+    <!-- Client-side Micro-interactions & Export Script -->
+    <script>
+        function refreshDashboard() {
+            const btn = document.getElementById("refreshMetricsBtn");
+            const icon = btn ? btn.querySelector(".material-symbols-outlined") : null;
+            if (icon) {
+                icon.classList.add("animate-spin");
+            }
+            setTimeout(function () {
+                window.location.reload();
+            }, 350);
+        }
+
+        function exportAnalyticsCSV() {
+            const rows = [
+                ["Metric", "Value"],
+                ["Total Songs", document.querySelector("h1") ? "[[${totalSongs}]]" : ""],
+                ["Total Artists", "[[${totalArtists}]]"],
+                ["Total Albums", "[[${totalAlbums}]]"],
+                ["Total Genres", "[[${totalGenres}]]"],
+                ["Average Rating", "[[${averageRating}]]"],
+                ["Favorite Songs", "[[${favoriteSongs}]]"],
+                ["Favorite Percentage", "[[${favoritePercentage}]]%"],
+                ["Top Genre", "[[${popularGenre}]]"],
+                ["Favorite Duration", "[[${favoriteDuration}]]"]
+            ];
+
+            let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "musichub_catalog_analytics.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
 </body>
-
 </html>

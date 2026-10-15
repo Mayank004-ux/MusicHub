@@ -64,6 +64,8 @@ private Integer releaseYear;
     @Column(columnDefinition = "TEXT")
 private String lyrics;
 
+private String audioUrl;
+
     public Song() {
     }
 

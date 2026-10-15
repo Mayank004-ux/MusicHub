@@ -1,168 +1,540 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-    <title>Playlists | MusicHub</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Playlists | MusicHub</title>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS with Stitch Design Tokens -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#53e076",
+                        "primary-container": "#1db954",
+                        "on-primary": "#003914",
+                        "on-primary-container": "#004118",
+                        "secondary": "#3de96f",
+                        "secondary-container": "#00cc57",
+                        "secondary-fixed": "#69ff89",
+                        "background": "#131313",
+                        "surface": "#131313",
+                        "surface-dim": "#131313",
+                        "surface-bright": "#393939",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container": "#201f1f",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "on-surface-variant": "#bccbb9",
+                        "outline": "#869585",
+                        "outline-variant": "#3d4a3d",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "space-xl": "2.5rem",
+                        "gutter-mobile": "1rem",
+                        "space-md": "1rem",
+                        "space-sm": "0.5rem",
+                        "space-lg": "1.5rem",
+                        "space-xs": "0.25rem",
+                        "margin": "2rem"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    
     <link rel="stylesheet" th:href="@{/style.css}">
+    
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 16px);
+        }
+        .material-symbols-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom image fallback gradient */
+        .playlist-cover-gradient-1 {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1db954 100%);
+        }
+        .playlist-cover-gradient-2 {
+            background: linear-gradient(135deg, #4a154b 0%, #611f69 50%, #1db954 100%);
+        }
+        .playlist-cover-gradient-3 {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .playlist-cover-gradient-4 {
+            background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 50%, #1db954 100%);
+        }
+    </style>
 </head>
+<body class="stitch-theme bg-background text-on-surface antialiased min-h-screen">
 
-<body>
+    <!-- Top Navigation Fragment (Preserved) -->
+    <div th:replace="~{navbar :: navbar}"></div>
 
-<div th:replace="~{navbar :: navbar}"></div>
+    <!-- Main Container -->
+    <main class="w-full min-h-screen pt-4 pb-28 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto flex flex-col space-y-6">
 
-<h1>🎵 My Playlists</h1>
+        <!-- Back to Library Breadcrumb -->
+        <div class="flex items-center justify-between text-xs text-on-surface-variant">
+            <a th:href="@{/}" class="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                <span>Back to Library</span>
+            </a>
+            <span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-medium">
+                Collection Hub
+            </span>
+        </div>
 
-<form th:action="@{/playlist/search}" method="get">
+        <!-- 1. Success Banner / Toast Notification (Dynamic) -->
+        <section th:if="${success != null and !#strings.isEmpty(success)}" 
+                 aria-live="polite" 
+                 class="w-full transition-all duration-300 ease-out" 
+                 id="toast-banner" 
+                 role="alert">
+            <div class="flex items-center justify-between gap-3 p-3.5 pl-4 bg-surface-container-high rounded-xl shadow-[0_4px_24px_rgba(29,185,84,0.18)] border border-primary/25 relative overflow-hidden">
+                <!-- Ambient emerald glow -->
+                <div class="absolute -left-6 top-1/2 -translate-y-1/2 w-20 h-20 bg-primary/20 rounded-full blur-xl pointer-events-none"></div>
+                
+                <div class="flex items-center gap-3 min-w-0 z-10">
+                    <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 shadow-[0_0_12px_rgba(29,185,84,0.4)]">
+                        <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    </div>
+                    
+                    <p th:if="${success == 'created'}" class="text-sm font-medium text-on-surface truncate">
+                        Playlist created successfully! Ready to add songs.
+                    </p>
+                    <p th:if="${success == 'updated'}" class="text-sm font-medium text-on-surface truncate">
+                        Playlist updated and saved successfully!
+                    </p>
+                    <p th:if="${success == 'deleted'}" class="text-sm font-medium text-on-surface truncate">
+                        Playlist removed from your library.
+                    </p>
+                </div>
 
-    <input
-        type="text"
-        name="keyword"
-        placeholder="🔍 Search playlists...">
+                <button aria-label="Dismiss notification" 
+                        class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-colors flex-shrink-0 z-10" 
+                        onclick="document.getElementById('toast-banner').remove()">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+        </section>
 
-    <button type="submit">
-        Search
-    </button>
+        <!-- 2. Page Header & Primary Actions -->
+        <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2">
+            <div class="flex flex-col text-left">
+                <div class="flex items-center gap-2.5">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-on-surface tracking-tight text-left">
+                        My Playlists
+                    </h1>
+                    <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary text-xs font-bold border border-primary/25"
+                          th:text="${playlists != null ? playlists.size() : 0}">0</span>
+                </div>
+                <p class="text-sm text-on-surface-variant mt-1 text-left leading-relaxed">
+                    Curate, organize, and manage your custom music collections and mood mixes.
+                </p>
+            </div>
 
-</form>
-<a href="/playlist/sort/asc">
+            <!-- Primary Create Playlist Action -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <a th:href="@{/playlist/add}"
+                   class="h-11 px-5 rounded-full bg-primary-container hover:bg-[#1ed760] text-[#003914] font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(29,185,84,0.35)] transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">add</span>
+                    <span>Create Playlist</span>
+                </a>
+            </div>
+        </header>
 
-    <button>
-        ⬆ Sort A-Z
-    </button>
+        <!-- 3. Search & Filter Bar -->
+        <section class="flex flex-col gap-3">
+            <!-- Search Input with live search, server fallback, and enhanced controls -->
+            <form th:action="@{/playlist/search}" method="get" 
+                  class="search-bar-wrapper group relative flex items-center w-full rounded-full bg-surface-container/90 hover:bg-surface-container border border-white/10 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/25 focus-within:shadow-[0_0_24px_rgba(29,185,84,0.22)] transition-all duration-200">
+                <div class="absolute left-3.5 flex items-center justify-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-[22px]">search</span>
+                </div>
+                
+                <input type="text"
+                       id="playlistSearchInput"
+                       name="keyword"
+                       th:value="${param.keyword}"
+                       placeholder="Search playlists by title or mood..."
+                       class="w-full h-12 pl-12 pr-32 sm:pr-44 bg-transparent text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none rounded-full" />
+                
+                <div class="absolute right-2 flex items-center gap-1.5">
+                    <!-- Live Match Count Badge -->
+                    <span id="playlistMatchCount" 
+                          class="hidden text-[11px] px-2.5 py-0.5 rounded-full bg-primary/15 text-primary font-bold border border-primary/20">
+                    </span>
 
-</a>
+                    <!-- Clear search button -->
+                    <button type="button"
+                            id="clearPlaylistSearch"
+                            aria-label="Clear search"
+                            class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-white hover:bg-surface-bright transition-all opacity-0"
+                            title="Clear search (Esc)"
+                            onclick="clearSearch()">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                    </button>
 
-<a href="/playlist/sort/desc">
+                    <!-- Keyboard shortcut hint -->
+                    <kbd class="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-on-surface-variant/50 bg-surface-container-high border border-white/10 rounded-md pointer-events-none"
+                         title="Press / to search">
+                        /
+                    </kbd>
 
-    <button>
-        ⬇ Sort Z-A
-    </button>
+                    <!-- Search Submit Pill -->
+                    <button type="submit" 
+                            class="h-8 px-3.5 rounded-full bg-primary-container hover:bg-[#1ed760] text-[#003914] text-xs font-bold transition-all shadow-sm active:scale-95">
+                        Search
+                    </button>
+                </div>
+            </form>
 
-</a>
+            <!-- Inline No Matches Feedback for playlists -->
+            <div id="noPlaylistMatches" class="hidden p-6 rounded-xl bg-surface-container-low border border-white/5 text-center flex flex-col items-center justify-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[20px]">search_off</span>
+                </div>
+                <p class="text-sm text-on-surface font-semibold">No playlists match "<span id="playlistQueryEcho" class="text-primary font-bold"></span>"</p>
+                <p class="text-xs text-on-surface-variant">Try searching for another keyword or browse all your playlists below.</p>
+                <button type="button" onclick="clearSearch()" class="mt-1 text-xs text-primary font-semibold hover:underline">
+                    Clear Search Filter
+                </button>
+            </div>
 
-<br><br>
-<br>
+            <!-- Quick Filter & Sort Chips -->
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                <!-- All Playlists -->
+                <a th:href="@{/playlists}" 
+                   class="flex-shrink-0 px-4 h-8 rounded-full flex items-center gap-1.5 text-xs font-semibold transition-all shadow-sm active:scale-95 bg-on-surface text-surface hover:bg-white">
+                    <span>All</span>
+                    <span th:text="'(' + (${playlists != null ? playlists.size() : 0}) + ')'" class="opacity-80"></span>
+                </a>
 
-<div th:if="${success == 'created'}"
-     class="success-message">
+                <!-- Sort A-Z -->
+                <a th:href="@{/playlist/sort/asc}" 
+                   class="flex-shrink-0 px-4 h-8 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-xs font-semibold flex items-center gap-1.5 transition-colors active:scale-95 border border-white/5">
+                    <span class="material-symbols-outlined text-[15px]">arrow_upward</span>
+                    <span>Sort A-Z</span>
+                </a>
 
-    ✅ Playlist created successfully!
+                <!-- Sort Z-A -->
+                <a th:href="@{/playlist/sort/desc}" 
+                   class="flex-shrink-0 px-4 h-8 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-xs font-semibold flex items-center gap-1.5 transition-colors active:scale-95 border border-white/5">
+                    <span class="material-symbols-outlined text-[15px]">arrow_downward</span>
+                    <span>Sort Z-A</span>
+                </a>
+            </div>
+        </section>
 
-</div>
+        <!-- 4. Playlists Grid / Vertical Stack -->
+        <section id="playlistsContainer" 
+                 th:unless="${#lists.isEmpty(playlists)}" 
+                 class="flex flex-col gap-3.5 w-full">
 
-<div th:if="${success == 'updated'}"
-     class="success-message">
+            <article th:each="playlist, iterStat : ${playlists}" 
+                     class="song-card playlist-card group relative flex flex-col p-4 bg-surface-container-low hover:bg-surface-container rounded-xl transition-all duration-200 border border-white/5 hover:border-primary/30 shadow-md">
+                
+                <div class="flex items-start gap-4">
+                    <!-- Thumbnail Cover with Ambient Glow & Play Action -->
+                    <a th:href="@{/playlist/{id}(id=${playlist.id})}" 
+                       class="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 shadow-lg bg-surface-container-highest group/cover block">
+                        
+                        <!-- Dynamic Song Artwork if available -->
+                        <img th:if="${playlist.songs != null and !#lists.isEmpty(playlist.songs) and playlist.songs[0].imageUrl != null and !#strings.isEmpty(playlist.songs[0].imageUrl)}"
+                             th:src="${playlist.songs[0].imageUrl}"
+                             alt="Playlist Artwork"
+                             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        
+                        <!-- Fallback Themed Visual Disc -->
+                        <div th:class="${'w-full h-full flex items-center justify-center ' + (iterStat.index % 4 == 0 ? 'playlist-cover-gradient-1' : (iterStat.index % 4 == 1 ? 'playlist-cover-gradient-2' : (iterStat.index % 4 == 2 ? 'playlist-cover-gradient-3' : 'playlist-cover-gradient-4'))) + (playlist.songs != null and !#lists.isEmpty(playlist.songs) and playlist.songs[0].imageUrl != null ? ' hidden' : '')}">
+                            <span class="material-symbols-outlined text-white/80 text-[28px]">queue_music</span>
+                        </div>
 
-    ✏️ Playlist renamed successfully!
+                        <!-- Gradient shadow -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+                        
+                        <!-- Floating play badge -->
+                        <div class="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-md transform group-hover/cover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        </div>
+                    </a>
 
-</div>
+                    <!-- Meta Information (Strictly Left-Aligned) -->
+                    <div class="flex flex-col flex-1 min-w-0 text-left">
+                        <div class="flex items-start justify-between gap-2">
+                            <a th:href="@{/playlist/{id}(id=${playlist.id})}" class="min-w-0 block no-underline text-white hover:text-white">
+                                <h2 class="playlist-title text-base sm:text-lg font-bold text-white truncate text-left"
+                                    style="color: #ffffff !important;"
+                                    th:text="${playlist.name}">
+                                    Playlist Name
+                                </h2>
+                            </a>
+                        </div>
 
-<div th:if="${success == 'deleted'}"
-     class="success-message">
+                        <!-- Quick Subtitle / Mood Indicator -->
+                        <p class="text-xs text-on-surface-variant line-clamp-1 mt-0.5 text-left">
+                            Custom compilation &bull; Curated collection
+                        </p>
 
-    🗑️ Playlist deleted successfully!
+                        <!-- Key Stats (Songs count, duration, rating) -->
+                        <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-2 text-xs text-on-surface-variant/85 font-medium">
+                            <!-- Songs count -->
+                            <span class="flex items-center gap-1 text-primary">
+                                <span class="material-symbols-outlined text-[14px]">music_note</span>
+                                <span th:text="${playlist.songs != null ? playlist.songs.size() : 0} + ' Songs'">0 Songs</span>
+                            </span>
 
-</div>
-<br>
+                            <span class="opacity-40">&bull;</span>
 
-<a href="/playlist/add">
-    <button class="add-btn">
-        ➕ Create Playlist
-    </button>
-</a>
-<br><br>
+                            <!-- Duration -->
+                            <span class="flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">schedule</span>
+                                <span th:text="${playlist.totalDuration}">0 min</span>
+                            </span>
 
+                            <span class="opacity-40">&bull;</span>
 
-<a href="/">
+                            <!-- Average Rating -->
+                            <span class="flex items-center gap-1 text-amber-400 font-semibold">
+                                <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                <span th:text="${#numbers.formatDecimal(playlist.averageRating, 1, 1)}">0.0</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
 
-    <button class="home-btn">
+                <!-- Card Footer Actions Bar -->
+                <div class="flex items-center justify-between mt-3 pt-2.5 bg-surface-container/40 -mx-4 -mb-4 px-4 pb-3 rounded-b-xl border-t border-white/5">
+                    <span class="text-xs text-on-surface-variant/60 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px]">bolt</span>
+                        <span>Personal Mix</span>
+                    </span>
 
-        🏠 Back to Home
+                    <div class="flex items-center gap-1.5">
+                        <!-- Edit Button -->
+                        <a th:href="@{/playlist/edit/{id}(id=${playlist.id})}" 
+                           aria-label="Edit playlist" 
+                           title="Rename / Edit Playlist"
+                           class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-colors active:scale-95">
+                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                        </a>
 
-    </button>
+                        <!-- Delete Button with confirmation -->
+                        <form th:action="@{/playlist/delete/{id}(id=${playlist.id})}" 
+                              method="post" 
+                              class="inline m-0 p-0"
+                              onsubmit="return confirm('Are you sure you want to delete this playlist? This action cannot be undone.');">
+                            <button type="submit" 
+                                    aria-label="Delete playlist" 
+                                    title="Delete Playlist"
+                                    class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-error hover:bg-surface-bright transition-colors active:scale-95">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
+                        </form>
 
-</a>
-<hr>
+                        <!-- View Button -->
+                        <a th:href="@{/playlist/{id}(id=${playlist.id})}" 
+                           class="h-9 px-3.5 ml-1 rounded-full bg-surface-container-high text-on-surface hover:text-primary hover:bg-surface-bright font-semibold text-xs flex items-center gap-1.5 transition-colors">
+                            <span>View</span>
+                            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </article>
 
-<div th:if="${#lists.isEmpty(playlists)}"
-     class="empty-state">
+        </section>
 
-    <h2>🎵 No Playlists Yet</h2>
+        <!-- 5. Empty State (When no playlists exist or none match) -->
+        <section th:if="${#lists.isEmpty(playlists)}" 
+                 id="empty-state-card"
+                 class="w-full mt-4 flex flex-col items-center justify-center text-center p-8 sm:p-12 bg-surface-container-low rounded-2xl relative overflow-hidden border border-white/5 shadow-xl">
+            <!-- Subtle emerald radial background glow -->
+            <div class="absolute w-52 h-52 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    <p>
-        Create your first playlist and start organizing your favorite songs.
-    </p>
+            <!-- Icon Disc -->
+            <div class="w-16 h-16 rounded-full bg-surface-container-high text-primary flex items-center justify-center mb-4 shadow-[0_0_24px_rgba(29,185,84,0.18)] relative border border-primary/20">
+                <span class="material-symbols-outlined text-[32px]">queue_music</span>
+            </div>
 
-    <a href="/playlist/add">
+            <!-- Text Content -->
+            <h3 class="text-xl font-bold text-on-surface tracking-tight mb-1.5">
+                No Playlists Found
+            </h3>
+            <p class="text-sm text-on-surface-variant max-w-sm mb-6 leading-relaxed">
+                You haven't created any playlists yet. Start curating and organizing your favorite songs now.
+            </p>
 
-        <button class="add-btn">
+            <!-- Action Button -->
+            <a th:href="@{/playlist/add}"
+               class="h-11 px-6 rounded-full bg-primary-container hover:bg-[#1ed760] text-[#003914] font-bold text-sm flex items-center gap-2 shadow-[0_0_20px_rgba(29,185,84,0.35)] transition-all hover:scale-105 active:scale-95">
+                <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                <span>Create Your First Playlist</span>
+            </a>
+        </section>
 
-            ➕ Create Playlist
+    </main>
 
-        </button>
+    <!-- Docked Bottom Navigation Bar (Stitch Design) -->
+    <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
+        <div class="h-16 px-4 flex items-center justify-between max-w-md mx-auto">
+            <!-- Home -->
+            <a th:href="@{/}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">home</span>
+                <span class="text-[11px]">Home</span>
+            </a>
 
-    </a>
+            <!-- Playlists (Active highlighted) -->
+            <a th:href="@{/playlists}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-primary font-bold transition-colors">
+                <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">queue_music</span>
+                <span class="text-[11px]">Playlists</span>
+            </a>
 
-</div>
+            <!-- Center Action Button: Add Song -->
+            <div class="flex-1 flex items-center justify-center">
+                <a th:href="@{/song/add}" 
+                   aria-label="Add Song" 
+                   class="w-11 h-11 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(29,185,84,0.45)] hover:scale-105 active:scale-95 transition-transform"
+                   title="Add New Song">
+                    <span class="material-symbols-outlined text-[26px]">add</span>
+                </a>
+            </div>
 
-<div class="song-card"
-     th:each="playlist : ${playlists}">
+            <!-- Favorites -->
+            <a th:href="@{/favorites}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">favorite</span>
+                <span class="text-[11px]">Favorites</span>
+            </a>
 
-    <a th:href="@{/playlist/{id}(id=${playlist.id})}">
-        <h2 th:text="${playlist.name}"></h2>
+            <!-- Analytics -->
+            <a th:href="@{/analytics}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">insights</span>
+                <span class="text-[11px]">Analytics</span>
+            </a>
+        </div>
+    </nav>
 
-        <p>
+    <!-- Client-side Search & Interaction Script -->
+    <script>
+        const searchInput = document.getElementById("playlistSearchInput");
+        const clearBtn = document.getElementById("clearPlaylistSearch");
+        const countBadge = document.getElementById("playlistMatchCount");
+        const noMatchesBox = document.getElementById("noPlaylistMatches");
+        const queryEcho = document.getElementById("playlistQueryEcho");
 
-    🎶
-    <span th:text="${playlist.songs.size()}"></span>
-    Songs
+        function clearSearch() {
+            if (searchInput) {
+                searchInput.value = "";
+                filterPlaylists("");
+                if (clearBtn) clearBtn.classList.add("opacity-0");
+                searchInput.focus();
+            }
+        }
 
-</p>
-    </a>
+        function filterPlaylists(keyword) {
+            const cards = document.querySelectorAll(".playlist-card");
+            let visibleCount = 0;
 
-    <p>
-        🎵 Songs :
-        <span th:text="${playlist.songs.size()}"></span>
-    </p>
+            cards.forEach(function (card) {
+                const titleEl = card.querySelector("h2");
+                const title = titleEl ? titleEl.innerText.toLowerCase() : "";
+                const matches = keyword === "" || title.includes(keyword);
 
-    <p>
+                card.style.display = matches ? "" : "none";
+                if (matches) visibleCount++;
+            });
 
-    ⭐ Average Rating:
+            if (clearBtn) {
+                if (keyword.length > 0) {
+                    clearBtn.classList.remove("opacity-0");
+                } else {
+                    clearBtn.classList.add("opacity-0");
+                }
+            }
 
-    <span th:text="${#numbers.formatDecimal(playlist.averageRating,1,1)}"></span>
+            // Update live match count badge
+            if (countBadge) {
+                if (keyword.length > 0) {
+                    countBadge.innerText = visibleCount + (visibleCount === 1 ? ' playlist' : ' playlists');
+                    countBadge.classList.remove("hidden");
+                } else {
+                    countBadge.classList.add("hidden");
+                }
+            }
 
-</p>
+            // Update no-matches feedback
+            if (noMatchesBox) {
+                if (visibleCount === 0 && keyword.length > 0) {
+                    if (queryEcho) queryEcho.innerText = keyword;
+                    noMatchesBox.classList.remove("hidden");
+                } else {
+                    noMatchesBox.classList.add("hidden");
+                }
+            }
+        }
 
-    <p>
+        if (searchInput) {
+            // Initial clear button state
+            if (!searchInput.value) {
+                if (clearBtn) clearBtn.classList.add("opacity-0");
+            } else {
+                if (clearBtn) clearBtn.classList.remove("opacity-0");
+            }
 
-    ⏱ Total Duration:
+            searchInput.addEventListener("input", function () {
+                const keyword = searchInput.value.trim().toLowerCase();
+                filterPlaylists(keyword);
+            });
+        }
 
-    <span th:text="${playlist.totalDuration}"></span>
-
-</p>
-
-    <div class="button-group">
-
-        <a th:href="@{/playlist/edit/{id}(id=${playlist.id})}">
-            <button class="edit-btn">
-                ✏ Edit
-            </button>
-        </a>
-
-        <form th:action="@{/playlist/delete/{id}(id=${playlist.id})}"
-              method="post"
-              style="display:inline;">
-
-            <button class="delete-btn"
-                    onclick="return confirm('Delete this playlist?')">
-                🗑 Delete
-            </button>
-
-        </form>
-
-    </div>
-
-</div>
-
+        // Keyboard Shortcut: '/' to focus search, 'Escape' to clear & blur
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "/" && document.activeElement !== searchInput && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+                e.preventDefault();
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            } else if (e.key === "Escape" && document.activeElement === searchInput) {
+                clearSearch();
+                searchInput.blur();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -125,7 +125,7 @@ public Page<Song> getSongsByPage(int page) {
     return songRepository.findAll(pageable);
 }
 public List<Song> getTopRatedSongs() {
-    return songRepository.findByRatingGreaterThanEqual(4);
+    return songRepository.findByRatingGreaterThanEqualOrderByRatingDesc(4);
 }
 public long getTotalSongs() {
     return songRepository.count();
@@ -335,5 +335,19 @@ public Page<Song> searchSongsByPage(String keyword, int page) {
                     keyword,
                     keyword,
                     pageable);
+}
+
+public List<Song> searchTopRatedSongs(String keyword) {
+    if (keyword == null || keyword.trim().isEmpty()) {
+        return getTopRatedSongs();
+    }
+    return songRepository.searchTopRatedSongs(keyword.trim());
+}
+
+public List<Song> searchFavoriteSongs(String keyword) {
+    if (keyword == null || keyword.trim().isEmpty()) {
+        return getFavoriteSongs();
+    }
+    return songRepository.searchFavoriteSongs(keyword.trim());
 }
 }

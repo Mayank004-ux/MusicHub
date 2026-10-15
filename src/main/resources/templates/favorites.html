@@ -1,212 +1,619 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Favorites | MusicHub</title>
-    <p class="subtitle">
-
-Your Personal Music Library
-
-</p>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Favorites | MusicHub</title>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS with Stitch Design Tokens -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#53e076",
+                        "primary-container": "#1db954",
+                        "on-primary": "#003914",
+                        "on-primary-container": "#004118",
+                        "secondary": "#3de96f",
+                        "secondary-container": "#00cc57",
+                        "secondary-fixed": "#69ff89",
+                        "background": "#131313",
+                        "surface": "#131313",
+                        "surface-dim": "#131313",
+                        "surface-bright": "#393939",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container": "#201f1f",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "on-surface-variant": "#bccbb9",
+                        "outline": "#869585",
+                        "outline-variant": "#3d4a3d",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "space-xl": "2.5rem",
+                        "gutter-mobile": "1rem",
+                        "space-md": "1rem",
+                        "space-sm": "0.5rem",
+                        "space-lg": "1.5rem",
+                        "space-xs": "0.25rem",
+                        "margin": "2rem"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    
     <link rel="stylesheet" th:href="@{/style.css}">
+    
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 16px);
+        }
+        .material-symbols-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
 </head>
+<body class="stitch-theme bg-background text-on-surface antialiased min-h-screen">
 
-<body>
-
-    <div th:replace="~{navbar :: navbar}"></div>
-
-    <h1>❤️ Favorite Songs</h1>
-     
-    <h2>
-
-❤️ Favorite Songs :
-<span th:text="${favoriteCount}"></span>
-
-</h2>
-<h2>
-
-⭐ Average Rating :
-
-<span
-th:text="${#numbers.formatDecimal(averageRating,1,1)}">
-</span>
-
-</h2>
-<h2>
-
-⏱ Total Duration :
-
-<span
-th:text="${favoriteDuration}">
-</span>
-
-</h2>
-
-<h2>🌍 Languages</h2>
-
-<ul>
-
-    <li
-        th:each="entry : ${languageStats}">
-
-        <span th:text="${entry.key}"></span>
-
-        :
-
-        <span th:text="${entry.value}"></span>
-
-    </li>
-
-</ul>
-
-    <a href="/" class="back-btn">⬅ Back to Home</a>
-
-<br><br>
-
-    <h3>Search Songs</h3>
-
-    <input
-    type="text"
-    id="searchInput"
-    placeholder="Search here...">
-    <br>
-
-<a href="/song/add">
-
-    <button class="add-btn">
-
-        ➕ Add New Song
-
-    </button>
-
-</a>
-
-    <hr>
-
-  <div class="song-card" th:each="song : ${songs}">
-
-    <img th:src="${song.imageUrl}"
-     alt="Album Cover"
-     class="album-cover">
- <div class="card-content">
-
-    <!-- Song title -->
-    <!-- Artist -->
-    <!-- Album -->
-    <!-- Genre -->
-    <!-- Language -->
-    <!-- Buttons -->
-
-</div>
-    <h2 class="song-title" th:text="${song.title}"></h2>
-
-    <p>
-        👤 <span class="song-artist" th:text="${song.artist}"></span>
-    </p>
-
-    <p>
-        💿 <span class="song-album" th:text="${song.album}"></span>
-    </p>
-    <p>
-
-🎼
-
-<span th:text="${song.genre}"> </span>
-<p>
-
-🌍
-
-<span
-th:text="${song.language}">
-</span>
-<p>
-    ⭐ <span th:text="${song.rating}"></span>/5
-</p>
-<p th:if="${song.favorite}">
-    ❤️ Favorite
-</p>
-
-<p th:unless="${song.favorite}">
-    🤍 Not Favorite
-</p>
-<p>
-    ⏱ <span th:text="${song.duration}"></span>
-</p>
-<p>
-    📅 <span th:text="${song.releaseYear}"></span>
-</p>
-</p>
-</p>
-    <div class="button-group">
-
-       <a th:href="@{/song/{id}(id=${song.id})}">
-
-    <button class="details-btn">
-
-        Details
-
-    </button>
-
-</a>
-
-       <a th:href="@{/song/edit/{id}(id=${song.id})}">
-    <button class="edit-btn">
-        Edit
-    </button>
-</a>
-
-        <form th:action="@{/song/delete/{id}(id=${song.id})}"
-      method="post"
-      style="display:inline;">
-
-    <button class="delete-btn"
-            onclick="return confirm('Are you sure you want to delete this song?')">
-
-        Delete
-
-    </button>
-
-</form>
-
+    <!-- Top Navigation Fragment (Preserved) -->
+    <div th:with="activePage=${activePage != null ? activePage : 'favorites'}">
+        <div th:replace="~{navbar :: navbar}"></div>
     </div>
 
-</div>
-<script>
+    <!-- Main Content Container -->
+    <main class="w-full min-h-screen pt-4 pb-28 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto flex flex-col space-y-6">
 
-const searchInput = document.getElementById("searchInput");
+        <!-- Top Breadcrumb & Quick Action -->
+        <div class="flex items-center justify-between text-xs text-on-surface-variant">
+            <a th:href="@{/}" class="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                <span>Back to Library</span>
+            </a>
+            <a th:href="@{/song/add}" class="inline-flex items-center gap-1 text-primary font-semibold hover:underline">
+                <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                <span>Add Song</span>
+            </a>
+        </div>
 
-searchInput.addEventListener("keyup", function () {
+        <!-- 1. Header & Hero Title -->
+        <section class="flex flex-col gap-2 pt-1 text-left">
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight text-left">
+                        Your Favorites
+                    </h1>
+                    <span class="px-2.5 py-0.5 rounded-full bg-primary-container text-[#003914] text-xs font-bold shadow-[0_0_12px_rgba(29,185,84,0.35)]"
+                          th:text="${favoriteCount != null ? favoriteCount : (songs != null ? songs.size() : 0)}">
+                        0
+                    </span>
+                </div>
 
-    const keyword = searchInput.value.toLowerCase();
+                <a th:href="@{/playlists}" 
+                   title="View Playlists"
+                   class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high active:scale-95 transition-all">
+                    <span class="material-symbols-outlined text-[20px]">queue_music</span>
+                </a>
+            </div>
+            
+            <p class="text-sm text-on-surface-variant leading-relaxed text-left">
+                Your starred tracks, hand-picked gems, and all-time personal rotation.
+            </p>
+        </section>
 
-    const cards = document.querySelectorAll(".song-card");
+        <!-- 2. Quick Stat & Master Action Banner (Stitch Design) -->
+        <section class="relative overflow-hidden rounded-2xl bg-surface-container-high p-5 sm:p-6 shadow-xl border border-white/5">
+            <!-- Ambient emerald glow -->
+            <div class="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-primary/15 blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-8 -left-8 w-36 h-36 rounded-full bg-primary-container/10 blur-2xl pointer-events-none"></div>
 
-    cards.forEach(function(card){
+            <div class="relative z-10 flex flex-col gap-5">
+                <!-- Top Row: Icon + Stats -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-13 h-13 p-3 rounded-2xl bg-primary/15 flex items-center justify-center shadow-[0_0_18px_rgba(29,185,84,0.3)] flex-shrink-0 border border-primary/20">
+                            <span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                        </div>
+                        <div class="flex flex-col min-w-0 text-left">
+                            <span class="text-lg sm:text-xl font-bold text-white tracking-tight"
+                                  th:text="(${favoriteCount != null ? favoriteCount : (songs != null ? songs.size() : 0)}) + ' Favorite Songs'">
+                                0 Favorite Songs
+                            </span>
+                            <div class="flex items-center gap-3 text-xs text-on-surface-variant mt-0.5 font-medium flex-wrap">
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px] text-primary">schedule</span>
+                                    <span th:text="${favoriteDuration != null ? favoriteDuration + ' saved' : '0 min saved'}">0 min saved</span>
+                                </span>
+                                <span>&bull;</span>
+                                <span class="flex items-center gap-1 text-amber-400">
+                                    <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span th:text="${averageRating != null ? #numbers.formatDecimal(averageRating, 1, 1) + ' Avg Rating' : '0.0 Avg Rating'}">0.0 Avg Rating</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
-        const title =
-        card.querySelector(".song-title").innerText.toLowerCase();
+                    <!-- Quick Language Pills (Dynamic from languageStats) -->
+                    <div th:if="${languageStats != null and !languageStats.isEmpty()}" 
+                         class="flex items-center gap-1.5 flex-wrap">
+                        <span class="text-[11px] uppercase tracking-wider text-on-surface-variant/70 font-semibold mr-1">Languages:</span>
+                        <span th:each="entry : ${languageStats}" 
+                              class="px-2.5 py-0.5 rounded-full bg-surface-container text-xs text-on-surface-variant font-medium border border-white/5">
+                            <span th:text="${entry.key}" class="text-white font-semibold"></span>: 
+                            <span th:text="${entry.value}" class="text-primary"></span>
+                        </span>
+                    </div>
+                </div>
 
-        const artist =
-        card.querySelector(".song-artist").innerText.toLowerCase();
+                <!-- Action Buttons: Play First / Back / Add -->
+                <div class="flex items-center gap-3 pt-1 flex-wrap">
+                    <a th:if="${songs != null and !#lists.isEmpty(songs)}"
+                       th:href="@{/song/{id}(id=${songs[0].id})}" 
+                       class="flex-1 sm:flex-initial h-11 px-6 rounded-full bg-primary-container text-[#003914] font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_16px_rgba(29,185,84,0.35)] hover:scale-[1.02] active:scale-[0.98] transition-transform">
+                        <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        <span>Play All</span>
+                    </a>
+                    
+                    <a th:href="@{/song/add}" 
+                       class="flex-1 sm:flex-initial h-11 px-5 rounded-full bg-surface-container hover:bg-surface-container-highest text-on-surface font-semibold text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-all border border-white/5">
+                        <span class="material-symbols-outlined text-[18px] text-primary">add</span>
+                        <span>Add New Song</span>
+                    </a>
 
-        const album =
-        card.querySelector(".song-album").innerText.toLowerCase();
+                    <a th:href="@{/}" 
+                       class="h-11 px-4 rounded-full bg-surface-container hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface text-sm flex items-center justify-center gap-1.5 transition-colors border border-white/5">
+                        <span class="material-symbols-outlined text-[18px]">home</span>
+                        <span>Library</span>
+                    </a>
+                </div>
+            </div>
+        </section>
 
-        if(title.includes(keyword)
-            || artist.includes(keyword)
-            || album.includes(keyword)){
+        <!-- 3. Search & Filter Bar -->
+        <section class="flex flex-col gap-3">
+            <!-- Search Bar with Live Filter & Action Controls -->
+            <form th:action="@{/favorites}" method="get" id="favoritesSearchForm" class="musichub-search-form group">
+                <div class="musichub-search-icon">
+                    <span class="material-symbols-outlined text-[22px]">search</span>
+                </div>
+                
+                <input type="text"
+                       name="keyword"
+                       id="searchInput"
+                       th:value="${keyword}"
+                       placeholder="Search songs, artists, albums..."
+                       class="musichub-search-input"
+                       autocomplete="off" />
+                
+                <div class="musichub-search-actions">
+                    <!-- Live Match Count Pill -->
+                    <span id="searchResultCount" class="hidden musichub-search-badge"></span>
 
-            card.style.display="block";
+                    <!-- Clear Search Button -->
+                    <button type="button"
+                            id="clearSearchBtn"
+                            aria-label="Clear search"
+                            class="musichub-search-clear"
+                            th:classappend="${keyword != null and !keyword.isEmpty()} ? '' : 'opacity-0 pointer-events-none'"
+                            title="Clear search (Esc)"
+                            onclick="clearFavoritesSearch()">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                    </button>
 
-        }else{
+                    <!-- Keyboard shortcut hint -->
+                    <kbd class="musichub-search-kbd" title="Press / to search">/</kbd>
 
-            card.style.display="none";
+                    <!-- Green Search Button -->
+                    <button type="submit" class="musichub-search-btn" id="favoritesSearchBtn">
+                        <span>Search</span>
+                    </button>
+                </div>
+            </form>
 
+            <!-- Inline No Matches Found Feedback -->
+            <div id="noSearchMatches" class="hidden p-6 rounded-xl bg-surface-container-low border border-white/5 text-center flex flex-col items-center justify-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[20px]">search_off</span>
+                </div>
+                <p class="text-sm text-on-surface font-semibold">No favorites match "<span id="searchQueryEcho" class="text-primary font-bold"></span>"</p>
+                <p class="text-xs text-on-surface-variant">Try checking for typos or searching by artist, album, or language.</p>
+                <button type="button" onclick="clearFavoritesSearch()" class="mt-1 text-xs text-primary font-semibold hover:underline">
+                    Clear Search Filter
+                </button>
+            </div>
+
+            <!-- Filter Chips: All + Dynamic Languages + Genres -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+                <!-- All Filter -->
+                <button type="button"
+                        onclick="filterByBadge('')"
+                        class="filter-chip h-8 px-4 rounded-full bg-on-surface text-surface text-xs font-semibold whitespace-nowrap shadow-sm flex items-center gap-1.5 flex-shrink-0 transition-transform active:scale-95"
+                        data-filter="">
+                    <span>All</span>
+                    <span class="opacity-70 font-normal" th:text="${favoriteCount != null ? favoriteCount : (songs != null ? songs.size() : 0)}">0</span>
+                </button>
+
+                <!-- Language Filter Chips (Dynamic) -->
+                <button th:each="entry : ${languageStats}"
+                        type="button"
+                        onclick="filterByBadge(this.getAttribute('data-filter'))"
+                        th:data-filter="${entry.key}"
+                        class="filter-chip h-8 px-4 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface text-xs font-medium whitespace-nowrap flex items-center gap-1.5 flex-shrink-0 transition-colors border border-white/5">
+                    <span th:text="${entry.key}">Language</span>
+                    <span class="opacity-60 text-[11px]" th:text="'(' + ${entry.value} + ')'"></span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 4. Tracklist Section (When favorite songs exist) -->
+        <section id="favoritesTracklist" 
+                 th:unless="${#lists.isEmpty(songs)}" 
+                 class="flex flex-col gap-3 w-full">
+
+            <article th:each="song : ${songs}" 
+                     class="song-card p-4 rounded-xl bg-surface-container hover:bg-surface-container-high flex flex-col gap-3 shadow-md transition-all border border-white/5 hover:border-primary/30">
+                
+                <div class="flex items-start gap-3.5 min-w-0">
+                    <!-- Album Cover with Play Trigger -->
+                    <a th:href="@{/song/{id}(id=${song.id})}" 
+                       class="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 shadow-[0_0_12px_rgba(83,224,118,0.15)] group/thumb block bg-surface-container-highest">
+                        
+                        <!-- Song Artwork -->
+                        <img th:if="${song.imageUrl != null and !#strings.isEmpty(song.imageUrl)}"
+                             th:src="${song.imageUrl}"
+                             alt="Album Art"
+                             class="w-full h-full object-cover transition-transform duration-300 group-hover/thumb:scale-105"
+                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        
+                        <!-- Fallback Album Cover -->
+                        <div th:class="${'w-full h-full flex items-center justify-center bg-gradient-to-br from-neutral-800 to-neutral-900' + (song.imageUrl != null and !#strings.isEmpty(song.imageUrl) ? ' hidden' : '')}">
+                            <span class="material-symbols-outlined text-primary text-[24px]">music_note</span>
+                        </div>
+
+                        <!-- Hover Play Overlay -->
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity">
+                            <span class="material-symbols-outlined text-white text-[24px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        </div>
+                    </a>
+
+                    <!-- Song Meta (Strictly Left-Aligned) -->
+                    <div class="flex-1 min-w-0 flex flex-col text-left">
+                        <div class="flex items-start justify-between gap-1">
+                            <a th:href="@{/song/{id}(id=${song.id})}" class="min-w-0 block">
+                                <h2 class="song-title text-base sm:text-lg font-bold text-white truncate text-left"
+                                    style="color: #ffffff !important;"
+                                    th:text="${song.title}">
+                                    Song Title
+                                </h2>
+                            </a>
+                            
+                            <!-- Favorite indicator icon badge -->
+                            <div class="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0" title="In Favorites">
+                                <span class="material-symbols-outlined text-[17px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                            </div>
+                        </div>
+
+                        <p class="song-artist font-medium text-xs sm:text-sm text-primary truncate text-left mt-0.5" 
+                           th:text="${song.artist}">
+                            Artist Name
+                        </p>
+                        
+                        <p class="song-album text-xs text-on-surface-variant/70 truncate text-left mt-0.5">
+                            <span th:text="${song.album}">Album</span>
+                            <span th:if="${song.releaseYear != null}" th:text="' (' + ${song.releaseYear} + ')'"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Footer Row: Tags + Actions -->
+                <div class="flex items-center justify-between pt-2 border-t border-white/5 flex-wrap gap-2">
+                    <!-- Badges (Genre, Language, Rating, Duration) -->
+                    <div class="flex items-center gap-2 flex-wrap text-xs">
+                        <!-- Genre Badge -->
+                        <span th:if="${song.genre != null and !#strings.isEmpty(song.genre)}"
+                              class="song-genre px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-medium text-[11px] border border-white/5"
+                              th:text="${song.genre}">
+                            Genre
+                        </span>
+
+                        <!-- Language Badge -->
+                        <span th:if="${song.language != null and !#strings.isEmpty(song.language)}"
+                              class="song-language px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-medium text-[11px] border border-white/5"
+                              th:text="${song.language}">
+                            Language
+                        </span>
+
+                        <!-- Rating Badge -->
+                        <span th:if="${song.rating != null}"
+                              class="flex items-center text-amber-400 font-semibold gap-0.5">
+                            <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span th:text="${song.rating}">5</span>/5
+                        </span>
+
+                        <!-- Duration -->
+                        <span th:if="${song.duration != null and !#strings.isEmpty(song.duration)}"
+                              class="text-on-surface-variant/70 flex items-center gap-1 text-[11px]">
+                            <span class="material-symbols-outlined text-[13px]">schedule</span>
+                            <span th:text="${song.duration}">0:00</span>
+                        </span>
+                    </div>
+
+                    <!-- Song Action Buttons -->
+                    <div class="flex items-center gap-1.5 ml-auto">
+                        <!-- Details Button -->
+                        <a th:href="@{/song/{id}(id=${song.id})}" 
+                           class="h-8 px-3 rounded-full bg-surface-container-high hover:bg-surface-bright text-on-surface hover:text-primary text-xs font-semibold flex items-center gap-1 transition-all active:scale-95">
+                            <span>Details</span>
+                            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                        </a>
+
+                        <!-- Edit Button -->
+                        <a th:href="@{/song/edit/{id}(id=${song.id})}" 
+                           aria-label="Edit song"
+                           title="Edit Song"
+                           class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-colors active:scale-95">
+                            <span class="material-symbols-outlined text-[16px]">edit</span>
+                        </a>
+
+                        <!-- Delete Button with confirm -->
+                        <form th:action="@{/song/delete/{id}(id=${song.id})}" 
+                              method="post" 
+                              class="inline m-0 p-0"
+                              onsubmit="return confirm('Are you sure you want to delete this song?');">
+                            <button type="submit" 
+                                    aria-label="Delete song"
+                                    title="Delete Song"
+                                    class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:text-error hover:bg-surface-bright transition-colors active:scale-95">
+                                <span class="material-symbols-outlined text-[16px]">delete</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- 5. Empty State (When no favorite songs exist or match search) -->
+        <section th:if="${#lists.isEmpty(songs)}" 
+                 id="empty-favorites-card"
+                 class="w-full mt-4 flex flex-col items-center justify-center text-center p-8 sm:p-12 bg-surface-container-low rounded-2xl relative overflow-hidden border border-white/5 shadow-xl">
+            <!-- Subtle emerald radial background glow -->
+            <div class="absolute w-52 h-52 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Icon Disc -->
+            <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mb-4 shadow-[0_0_24px_rgba(29,185,84,0.18)] relative border border-white/10">
+                <span class="material-symbols-outlined text-[32px] text-primary" th:text="${keyword != null and !keyword.isEmpty()} ? 'search_off' : 'heart_broken'">heart_broken</span>
+            </div>
+
+            <!-- Content for search results vs truly empty -->
+            <div th:if="${keyword != null and !keyword.isEmpty()}">
+                <h3 class="text-xl font-bold text-white tracking-tight mb-1.5">
+                    No Matching Favorites
+                </h3>
+                <p class="text-sm text-on-surface-variant max-w-sm mb-6 leading-relaxed">
+                    No favorite songs match "<span class="text-primary font-bold" th:text="${keyword}">keyword</span>". Try searching for another title, artist, or album.
+                </p>
+                <a th:href="@{/favorites}"
+                   class="h-11 px-6 rounded-full bg-primary-container hover:bg-[#1ed760] text-[#003914] font-bold text-sm inline-flex items-center gap-2 shadow-[0_0_16px_rgba(29,185,84,0.35)] transition-all hover:scale-105 active:scale-95">
+                    <span class="material-symbols-outlined text-[18px]">clear_all</span>
+                    <span>Clear Search</span>
+                </a>
+            </div>
+
+            <div th:unless="${keyword != null and !keyword.isEmpty()}">
+                <h3 class="text-xl font-bold text-white tracking-tight mb-1.5">
+                    No Favorites Yet
+                </h3>
+                <p class="text-sm text-on-surface-variant max-w-sm mb-6 leading-relaxed">
+                    You haven't added any songs to your favorites list yet. Explore your music library and tap the heart icon on any song you love!
+                </p>
+                <a th:href="@{/}"
+                   class="h-11 px-6 rounded-full bg-primary-container hover:bg-[#1ed760] text-[#003914] font-bold text-sm inline-flex items-center gap-2 shadow-[0_0_16px_rgba(29,185,84,0.35)] transition-all hover:scale-105 active:scale-95">
+                    <span>Explore Music Library</span>
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Docked Bottom Navigation Bar (Stitch Design) -->
+    <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
+        <div class="h-16 px-4 flex items-center justify-between max-w-md mx-auto">
+            <!-- Home -->
+            <a th:href="@{/}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">home</span>
+                <span class="text-[11px]">Home</span>
+            </a>
+
+            <!-- Playlists -->
+            <a th:href="@{/playlists}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">queue_music</span>
+                <span class="text-[11px]">Playlists</span>
+            </a>
+
+            <!-- Center Action Button: Add Song -->
+            <div class="flex-1 flex items-center justify-center">
+                <a th:href="@{/song/add}" 
+                   aria-label="Add Song" 
+                   class="w-11 h-11 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(29,185,84,0.45)] hover:scale-105 active:scale-95 transition-transform"
+                   title="Add New Song">
+                    <span class="material-symbols-outlined text-[26px]">add</span>
+                </a>
+            </div>
+
+            <!-- Favorites (Active highlighted) -->
+            <a th:href="@{/favorites}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-primary font-bold transition-colors">
+                <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                <span class="text-[11px]">Favorites</span>
+            </a>
+
+            <!-- Analytics -->
+            <a th:href="@{/analytics}" 
+               class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">insights</span>
+                <span class="text-[11px]">Analytics</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Client-side Real-time Search and Filter Script (Favorites Only) -->
+    <script>
+        const searchInput = document.getElementById("searchInput");
+        const clearBtn = document.getElementById("clearSearchBtn");
+        const favoritesSearchForm = document.getElementById("favoritesSearchForm");
+        let activeFilter = "";
+
+        function clearFavoritesSearch() {
+            if (searchInput) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const hadParam = urlParams.has("keyword") && urlParams.get("keyword").length > 0;
+                searchInput.value = "";
+                filterFavorites();
+                if (clearBtn) clearBtn.classList.add("opacity-0", "pointer-events-none");
+                searchInput.focus();
+                if (hadParam) {
+                    window.location.href = window.location.pathname;
+                }
+            }
         }
 
-    });
+        function filterByBadge(filterValue) {
+            activeFilter = filterValue.toLowerCase();
 
-});
+            // Update chip UI
+            document.querySelectorAll(".filter-chip").forEach(function (chip) {
+                const chipFilter = (chip.getAttribute("data-filter") || "").toLowerCase();
+                if (chipFilter === activeFilter) {
+                    chip.classList.remove("bg-surface-container", "text-on-surface-variant");
+                    chip.classList.add("bg-on-surface", "text-surface");
+                } else {
+                    chip.classList.remove("bg-on-surface", "text-surface");
+                    chip.classList.add("bg-surface-container", "text-on-surface-variant");
+                }
+            });
 
-</script>
+            filterFavorites();
+        }
+
+        function filterFavorites() {
+            const keyword = searchInput ? searchInput.value.trim().toLowerCase() : "";
+            const cards = document.querySelectorAll("#favoritesTracklist .song-card");
+            let visibleCount = 0;
+
+            cards.forEach(function (card) {
+                const titleEl = card.querySelector(".song-title");
+                const artistEl = card.querySelector(".song-artist");
+                const albumEl = card.querySelector(".song-album");
+                const genreEl = card.querySelector(".song-genre");
+                const langEl = card.querySelector(".song-language");
+
+                const title = titleEl ? titleEl.innerText.toLowerCase() : "";
+                const artist = artistEl ? artistEl.innerText.toLowerCase() : "";
+                const album = albumEl ? albumEl.innerText.toLowerCase() : "";
+                const genre = genreEl ? genreEl.innerText.toLowerCase() : "";
+                const lang = langEl ? langEl.innerText.toLowerCase() : "";
+
+                const matchesKeyword = keyword === "" || 
+                    title.includes(keyword) || 
+                    artist.includes(keyword) || 
+                    album.includes(keyword) || 
+                    genre.includes(keyword) || 
+                    lang.includes(keyword);
+
+                const matchesFilter = activeFilter === "" || 
+                    lang.includes(activeFilter) || 
+                    genre.includes(activeFilter);
+
+                const isVisible = (matchesKeyword && matchesFilter);
+                card.style.display = isVisible ? "" : "none";
+                if (isVisible) visibleCount++;
+            });
+
+            if (clearBtn) {
+                if (keyword.length > 0) {
+                    clearBtn.classList.remove("opacity-0", "pointer-events-none");
+                } else {
+                    clearBtn.classList.add("opacity-0", "pointer-events-none");
+                }
+            }
+
+            const countBadge = document.getElementById("searchResultCount");
+            if (countBadge) {
+                if (keyword.length > 0 || activeFilter.length > 0) {
+                    countBadge.innerText = visibleCount + (visibleCount === 1 ? ' match' : ' matches');
+                    countBadge.classList.remove("hidden");
+                } else {
+                    countBadge.classList.add("hidden");
+                }
+            }
+
+            const noMatchesBox = document.getElementById("noSearchMatches");
+            const queryEcho = document.getElementById("searchQueryEcho");
+            if (noMatchesBox) {
+                if (visibleCount === 0 && (keyword.length > 0 || activeFilter.length > 0)) {
+                    if (queryEcho) queryEcho.innerText = keyword || activeFilter;
+                    noMatchesBox.classList.remove("hidden");
+                } else {
+                    noMatchesBox.classList.add("hidden");
+                }
+            }
+        }
+
+        if (searchInput) {
+            if (!searchInput.value) {
+                if (clearBtn) clearBtn.classList.add("opacity-0", "pointer-events-none");
+            } else {
+                if (clearBtn) clearBtn.classList.remove("opacity-0", "pointer-events-none");
+            }
+            searchInput.addEventListener("input", filterFavorites);
+        }
+
+        // Global Keyboard Shortcut: '/' to focus search, 'Escape' to clear & blur
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "/" && document.activeElement !== searchInput && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+                e.preventDefault();
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            } else if (e.key === "Escape" && document.activeElement === searchInput) {
+                clearFavoritesSearch();
+                searchInput.blur();
+            }
+        });
+    </script>
 </body>
 </html>

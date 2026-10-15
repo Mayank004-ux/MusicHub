@@ -1,44 +1,118 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-
-    <title>Page Not Found | MusicHub</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | MusicHub</title>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS with Stitch Design Tokens -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#53e076",
+                        "primary-container": "#1db954",
+                        "on-primary": "#003914",
+                        "on-primary-container": "#004118",
+                        "secondary": "#3de96f",
+                        "background": "#131313",
+                        "surface": "#131313",
+                        "surface-container": "#201f1f",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "on-surface-variant": "#bccbb9"
+                    }
+                }
+            }
+        };
+    </script>
     <link rel="stylesheet" th:href="@{/style.css}">
-
+    <style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+    </style>
 </head>
+<body class="stitch-theme bg-background text-on-surface antialiased min-h-screen flex flex-col justify-between">
 
-<body>
+    <!-- Top Navigation Fragment -->
+    <div th:replace="~{navbar :: navbar}"></div>
 
-<div th:replace="~{navbar :: navbar}"></div>
+    <!-- Main Content Container -->
+    <main class="w-full pt-16 pb-28 px-4 sm:px-6 max-w-xl mx-auto flex-1 flex flex-col items-center justify-center text-center">
 
-<div class="empty-state">
+        <!-- Error Card -->
+        <div class="relative overflow-hidden rounded-3xl bg-surface-container p-8 sm:p-12 shadow-2xl border border-white/10 w-full space-y-6">
+            <!-- Ambient Glow -->
+            <div class="absolute -top-16 -right-16 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    <h1>404</h1>
+            <div class="relative z-10 space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-surface-container-high text-primary flex items-center justify-center mx-auto border border-white/10 shadow-[0_0_24px_rgba(83,224,118,0.2)]">
+                    <span class="material-symbols-outlined text-[36px]">search_off</span>
+                </div>
 
-    <h2>😕 Page Not Found</h2>
+                <div>
+                    <span class="text-xs uppercase tracking-widest text-primary font-bold">Error 404</span>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-1">Page Not Found</h1>
+                    <p class="text-sm text-on-surface-variant mt-2 max-w-sm mx-auto leading-relaxed">
+                        The track, playlist, or library route you are trying to reach doesn't exist or was moved.
+                    </p>
+                </div>
 
-    <p>
+                <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <a th:href="@{/}"
+                       class="w-full sm:w-auto px-7 py-3 rounded-full bg-primary-container hover:bg-[#1ed760] text-[#003914] font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(29,185,84,0.35)] active:scale-95 transition-all">
+                        <span class="material-symbols-outlined text-[18px]">home</span>
+                        <span>Back to Home</span>
+                    </a>
+                    <a th:href="@{/playlists}"
+                       class="w-full sm:w-auto px-6 py-3 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-white font-semibold text-sm flex items-center justify-center gap-1.5 border border-white/5 transition-all">
+                        <span class="material-symbols-outlined text-[18px]">queue_music</span>
+                        <span>My Playlists</span>
+                    </a>
+                </div>
+            </div>
+        </div>
 
-        The page you're looking for doesn't exist.
+    </main>
 
-    </p>
+    <!-- Footer Fragment -->
+    <div th:replace="~{footer :: footer}"></div>
 
-    <a href="/">
-
-        <button class="home-btn">
-
-            🏠 Back to Home
-
-        </button>
-
-    </a>
-
-</div>
-
-<div th:replace="~{footer :: footer}"></div>
+    <!-- Docked Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
+        <div class="h-16 px-4 flex items-center justify-between max-w-md mx-auto">
+            <a th:href="@{/}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-primary font-bold transition-colors">
+                <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">home</span>
+                <span class="text-[11px] font-semibold">Home</span>
+            </a>
+            <a th:href="@{/playlists}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">queue_music</span>
+                <span class="text-[11px]">Playlists</span>
+            </a>
+            <div class="flex-1 flex items-center justify-center">
+                <a th:href="@{/song/add}" aria-label="Add Song" class="w-11 h-11 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(29,185,84,0.45)] hover:scale-105 active:scale-95 transition-transform" title="Add New Song">
+                    <span class="material-symbols-outlined text-[26px]">add</span>
+                </a>
+            </div>
+            <a th:href="@{/favorites}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">favorite</span>
+                <span class="text-[11px]">Favorites</span>
+            </a>
+            <a th:href="@{/analytics}" class="flex-1 flex flex-col items-center justify-center min-w-[44px] min-h-[44px] gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[22px]">insights</span>
+                <span class="text-[11px]">Analytics</span>
+            </a>
+        </div>
+    </nav>
 
 </body>
-
 </html>

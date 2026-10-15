@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import com.mayank.musichub.model.Song;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -37,6 +38,14 @@ List<Song> findTop5ByOrderByIdDesc();
 Page<Song> findAll(Pageable pageable);
 
 List<Song> findByRatingGreaterThanEqual(Integer rating);
+
+List<Song> findByRatingGreaterThanEqualOrderByRatingDesc(Integer rating);
+
+@Query("SELECT s FROM Song s WHERE s.favorite = true AND (LOWER(s.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(s.artist) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(s.album) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+List<Song> searchFavoriteSongs(@Param("keyword") String keyword);
+
+@Query("SELECT s FROM Song s WHERE s.rating >= 4 AND (LOWER(s.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(s.artist) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(s.album) LIKE LOWER(CONCAT('%', :keyword, '%'))) ORDER BY s.rating DESC")
+List<Song> searchTopRatedSongs(@Param("keyword") String keyword);
 
 long countByFavoriteTrue();
 
