@@ -1,27 +1,34 @@
 package com.mayank.musichub.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import com.mayank.musichub.model.Song;
+import com.mayank.musichub.service.AudioStorageService;
 import com.mayank.musichub.service.SongService;
+import com.mayank.musichub.util.UrlValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-
-import com.mayank.musichub.model.Song;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.RequestParam;
-import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
-
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.Valid;
 
 @Controller
 public class HomeController {
 
     @Autowired
     private SongService songService;
+
+    @Autowired
+    private AudioStorageService audioStorageService;
 
     @GetMapping("/")
 public String home(
@@ -95,12 +102,58 @@ public String editSongPage(@PathVariable Integer id,
 }
 @PostMapping("/song/update/{id}")
 public String updateSong(@PathVariable Integer id,
-                         @ModelAttribute Song song) {
+                         @Valid @ModelAttribute("song") Song song,
+                         BindingResult result,
+                         @RequestParam(value = "audioFile", required = false) MultipartFile audioFile,
+                         @RequestParam(value = "removeAudio", defaultValue = "false") boolean removeAudio,
+                         Model model) {
 
-    songService.updateSong(id, song);
+    // Validate official streaming and preview URLs
+    if (song.getSpotifyUrl() != null && !song.getSpotifyUrl().isBlank()
+            && !UrlValidationUtil.isSpotifyUrl(song.getSpotifyUrl())) {
+        result.rejectValue("spotifyUrl", "error.song", "Invalid Spotify URL. Must be an official Spotify HTTPS link (e.g., https://open.spotify.com/...)");
+    }
+    if (song.getYoutubeUrl() != null && !song.getYoutubeUrl().isBlank()
+            && !UrlValidationUtil.isYouTubeUrl(song.getYoutubeUrl())) {
+        result.rejectValue("youtubeUrl", "error.song", "Invalid YouTube URL. Must be an official YouTube HTTPS link (e.g., https://www.youtube.com/...)");
+    }
+    if (song.getAudioUrl() != null && !song.getAudioUrl().isBlank()
+            && !UrlValidationUtil.isValidPreviewUrl(song.getAudioUrl())) {
+        result.rejectValue("audioUrl", "error.song", "Invalid preview URL. Must be a secure HTTPS link.");
+    }
 
-    return "redirect:/";
+    if (result.hasErrors()) {
+        Song original = songService.getSongById(id);
+        if (original != null) {
+            song.setAudioFileName(original.getAudioFileName());
+            song.setAudioStorageKey(original.getAudioStorageKey());
+            song.setAudioFileSize(original.getAudioFileSize());
+        }
+        model.addAttribute("song", song);
+        return "edit-song";
+    }
+
+    try {
+        songService.updateSongWithAudio(id, song, audioFile, removeAudio);
+    } catch (IllegalArgumentException e) {
+        Song original = songService.getSongById(id);
+        if (original != null) {
+            song.setAudioFileName(original.getAudioFileName());
+            song.setAudioStorageKey(original.getAudioStorageKey());
+            song.setAudioFileSize(original.getAudioFileSize());
+        }
+        model.addAttribute("uploadError", e.getMessage());
+        model.addAttribute("song", song);
+        return "edit-song";
+    } catch (Exception e) {
+        model.addAttribute("uploadError", "Failed to update audio file: " + e.getMessage());
+        model.addAttribute("song", song);
+        return "edit-song";
+    }
+
+    return "redirect:/song/" + id;
 }
+
 @PostMapping("/song/delete/{id}")
 public String deleteSong(@PathVariable Integer id) {
 
@@ -108,29 +161,117 @@ public String deleteSong(@PathVariable Integer id) {
 
     return "redirect:/";
 }
+
 @GetMapping("/song/add")
 public String addSongPage(Model model){
 
     model.addAttribute("song", new Song());
+    model.addAttribute("activePage", "add-song");
 
     return "add-song";
 
 }
+
 @PostMapping("/song/save")
 public String saveSong(@Valid @ModelAttribute("song") Song song,
-                       BindingResult result) {
+                       BindingResult result,
+                       @RequestParam(value = "audioFile", required = false) MultipartFile audioFile,
+                       Model model) {
 
-    System.out.println("===== saveSong() called =====");
-    System.out.println("Title = " + song.getTitle());
+    // Validate official streaming and preview URLs
+    if (song.getSpotifyUrl() != null && !song.getSpotifyUrl().isBlank()
+            && !UrlValidationUtil.isSpotifyUrl(song.getSpotifyUrl())) {
+        result.rejectValue("spotifyUrl", "error.song", "Invalid Spotify URL. Must be an official Spotify HTTPS link (e.g., https://open.spotify.com/...)");
+    }
+    if (song.getYoutubeUrl() != null && !song.getYoutubeUrl().isBlank()
+            && !UrlValidationUtil.isYouTubeUrl(song.getYoutubeUrl())) {
+        result.rejectValue("youtubeUrl", "error.song", "Invalid YouTube URL. Must be an official YouTube HTTPS link (e.g., https://www.youtube.com/...)");
+    }
+    if (song.getAudioUrl() != null && !song.getAudioUrl().isBlank()
+            && !UrlValidationUtil.isValidPreviewUrl(song.getAudioUrl())) {
+        result.rejectValue("audioUrl", "error.song", "Invalid preview URL. Must be a secure HTTPS link.");
+    }
 
     if (result.hasErrors()) {
-        System.out.println(result.getAllErrors());
+        model.addAttribute("activePage", "add-song");
         return "add-song";
     }
 
-    songService.saveSong(song);
+    try {
+        songService.saveSongWithAudio(song, audioFile);
+    } catch (IllegalArgumentException e) {
+        model.addAttribute("uploadError", e.getMessage());
+        model.addAttribute("activePage", "add-song");
+        return "add-song";
+    } catch (Exception e) {
+        model.addAttribute("uploadError", "Failed to save song audio: " + e.getMessage());
+        model.addAttribute("activePage", "add-song");
+        return "add-song";
+    }
 
     return "redirect:/";
+}
+
+@GetMapping("/song/{id}/download")
+public ResponseEntity<Resource> downloadSongAudio(@PathVariable Integer id) {
+    Song song = songService.getSongById(id);
+    if (song == null) {
+        return ResponseEntity.notFound().build();
+    }
+    if (!song.hasAudioFile()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    try {
+        Resource resource = audioStorageService.loadAudioAsResource(song.getAudioStorageKey());
+        String safeFilename = audioStorageService.generateSafeDownloadFilename(song);
+
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (song.getAudioContentType() != null) {
+            try {
+                mediaType = MediaType.parseMediaType(song.getAudioContentType());
+            } catch (Exception ignored) {
+            }
+        }
+
+        ContentDisposition disposition = ContentDisposition.attachment()
+                .filename(safeFilename, StandardCharsets.UTF_8)
+                .build();
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
+                .body(resource);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+}
+
+@GetMapping("/song/{id}/stream")
+public ResponseEntity<Resource> streamSongAudio(@PathVariable Integer id) {
+    Song song = songService.getSongById(id);
+    if (song == null || !song.hasAudioFile()) {
+        return ResponseEntity.notFound().build();
+    }
+
+    try {
+        Resource resource = audioStorageService.loadAudioAsResource(song.getAudioStorageKey());
+
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (song.getAudioContentType() != null) {
+            try {
+                mediaType = MediaType.parseMediaType(song.getAudioContentType());
+            } catch (Exception ignored) {
+            }
+        }
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .body(resource);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
 }
 @GetMapping("/favorites")
 public String showFavoriteSongs(

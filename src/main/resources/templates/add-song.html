@@ -83,8 +83,15 @@
                     </div>
                 </div>
 
+                <!-- Error banner if upload fails -->
+                <div th:if="${uploadError != null}" 
+                     class="p-4 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center gap-2.5">
+                    <span class="material-symbols-outlined text-[20px] text-rose-400">error</span>
+                    <span th:text="${uploadError}"></span>
+                </div>
+
                 <!-- Form -->
-                <form th:action="@{/song/save}" method="post" th:object="${song}" class="space-y-5">
+                <form th:action="@{/song/save}" method="post" th:object="${song}" enctype="multipart/form-data" class="space-y-5">
 
                     <!-- Title & Artist (2 columns) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -228,6 +235,43 @@
                                th:field="*{imageUrl}"
                                placeholder="https://images.unsplash.com/... or direct image link"
                                class="w-full h-11 px-3.5 bg-surface-container-high text-white text-sm rounded-xl border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all placeholder:text-on-surface-variant/40" />
+                    </div>
+
+                    <!-- Authorized Music File Upload (Optional) -->
+                    <div class="p-4 rounded-xl bg-surface-container-high border border-white/5 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+                                <span class="flex items-center gap-1.5 text-primary">
+                                    <span class="material-symbols-outlined text-[18px]">cloud_upload</span>
+                                    <span>Authorized Music File (MP3, WAV, M4A)</span>
+                                </span>
+                            </label>
+                            <span class="text-[11px] text-on-surface-variant/80">Max 50 MB • Optional</span>
+                        </div>
+                        <p class="text-[11px] text-on-surface-variant">
+                            Attach an audio file that you own or have permission to distribute. Files are stored securely and enabled for authorized downloads.
+                        </p>
+                        <input type="file"
+                               name="audioFile"
+                               accept=".mp3,.wav,.m4a,audio/mpeg,audio/wav,audio/mp4"
+                               class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-secondary-container file:cursor-pointer cursor-pointer bg-surface-container rounded-xl p-2 border border-white/10" />
+                    </div>
+
+                    <!-- External Audio Preview URL (Optional) -->
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-on-surface-variant font-semibold mb-1.5">
+                            <span class="flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[16px] text-primary">headphones</span>
+                                <span>External Legal Audio Preview URL (Optional)</span>
+                            </span>
+                        </label>
+                        <input type="url"
+                               th:field="*{audioUrl}"
+                               placeholder="https://... direct audio preview link"
+                               class="w-full h-11 px-3.5 bg-surface-container-high text-white text-sm rounded-xl border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all placeholder:text-on-surface-variant/40" />
+                        <p class="text-xs text-rose-400 mt-1 flex items-center gap-1 font-medium"
+                           th:if="${#fields.hasErrors('audioUrl')}"
+                           th:errors="*{audioUrl}">Preview URL Error</p>
                     </div>
 
                     <!-- Favorite Checkbox Toggle Card -->

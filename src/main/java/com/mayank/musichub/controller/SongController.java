@@ -11,12 +11,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import com.mayank.musichub.service.AudioStorageService;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import java.nio.charset.StandardCharsets;
+
 @RestController
 @RequestMapping("/songs")
 public class SongController {
 
     @Autowired
     private SongService songService;
+
+    @Autowired
+    private AudioStorageService audioStorageService;
 
     @GetMapping
     public List<Song> getAllSongs() {
@@ -70,6 +82,68 @@ public List<Song> searchArtist(@PathVariable String artist) {
 @GetMapping("/search/songs/{keyword}")
 public List<Song> searchSongs(@PathVariable String keyword) {
     return songService.searchSongs(keyword);
+}
+
+@GetMapping("/{id}/download")
+public ResponseEntity<Resource> downloadSongAudio(@PathVariable Integer id) {
+    Song song = songService.getSongById(id);
+    if (song == null) {
+        return ResponseEntity.notFound().build();
+    }
+    if (!song.hasAudioFile()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    try {
+        Resource resource = audioStorageService.loadAudioAsResource(song.getAudioStorageKey());
+        String safeFilename = audioStorageService.generateSafeDownloadFilename(song);
+
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (song.getAudioContentType() != null) {
+            try {
+                mediaType = MediaType.parseMediaType(song.getAudioContentType());
+            } catch (Exception ignored) {
+            }
+        }
+
+        ContentDisposition disposition = ContentDisposition.attachment()
+                .filename(safeFilename, StandardCharsets.UTF_8)
+                .build();
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
+                .body(resource);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+}
+
+@GetMapping("/{id}/stream")
+public ResponseEntity<Resource> streamSongAudio(@PathVariable Integer id) {
+    Song song = songService.getSongById(id);
+    if (song == null || !song.hasAudioFile()) {
+        return ResponseEntity.notFound().build();
+    }
+
+    try {
+        Resource resource = audioStorageService.loadAudioAsResource(song.getAudioStorageKey());
+
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (song.getAudioContentType() != null) {
+            try {
+                mediaType = MediaType.parseMediaType(song.getAudioContentType());
+            } catch (Exception ignored) {
+            }
+        }
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .body(resource);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
 }
 
 }

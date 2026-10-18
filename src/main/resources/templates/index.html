@@ -526,6 +526,14 @@
 
                         <!-- Action Icons -->
                         <div class="flex items-center gap-1">
+                            <!-- Download Authorized Audio (Only when available) -->
+                            <a th:if="${song.hasAudioFile()}" 
+                               th:href="@{/song/{id}/download(id=${song.id})}" 
+                               class="download-btn w-9 h-9 rounded-full flex items-center justify-center text-primary hover:text-on-primary-container hover:bg-primary-container active:scale-95 transition-all"
+                               th:title="'Download ' + ${song.audioFileName != null ? song.audioFileName : 'audio'} + ' (' + ${song.formattedAudioFileSize} + ')'">
+                                <span class="material-symbols-outlined text-[18px]">download</span>
+                            </a>
+
                             <!-- Add to Playlist -->
                             <a th:href="@{/song/{id}/choose-playlist(id=${song.id})}" 
                                class="playlist-btn w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-bright active:scale-95 transition-all"

@@ -62,9 +62,17 @@ private Integer releaseYear;
     
     
     @Column(columnDefinition = "TEXT")
-private String lyrics;
+    private String lyrics;
 
-private String audioUrl;
+    private String audioUrl;
+
+    private String audioFileName;
+
+    private String audioStorageKey;
+
+    private String audioContentType;
+
+    private Long audioFileSize;
 
     public Song() {
     }
@@ -174,5 +182,66 @@ public void setYoutubeUrl(String youtubeUrl) {
 
     public void setSpotifyUrl(String spotifyUrl) {
         this.spotifyUrl = spotifyUrl;
+    }
+
+    public String getAudioUrl() {
+        return audioUrl;
+    }
+
+    public void setAudioUrl(String audioUrl) {
+        this.audioUrl = audioUrl;
+    }
+
+    public String getAudioFileName() {
+        return audioFileName;
+    }
+
+    public void setAudioFileName(String audioFileName) {
+        this.audioFileName = audioFileName;
+    }
+
+    public String getAudioStorageKey() {
+        return audioStorageKey;
+    }
+
+    public void setAudioStorageKey(String audioStorageKey) {
+        this.audioStorageKey = audioStorageKey;
+    }
+
+    public String getAudioContentType() {
+        return audioContentType;
+    }
+
+    public void setAudioContentType(String audioContentType) {
+        this.audioContentType = audioContentType;
+    }
+
+    public Long getAudioFileSize() {
+        return audioFileSize;
+    }
+
+    public void setAudioFileSize(Long audioFileSize) {
+        this.audioFileSize = audioFileSize;
+    }
+
+    public boolean hasAudioFile() {
+        return audioStorageKey != null && !audioStorageKey.isBlank();
+    }
+
+    public boolean hasAudioPreview() {
+        return hasAudioFile() || (audioUrl != null && !audioUrl.isBlank());
+    }
+
+    public String getFormattedAudioFileSize() {
+        if (audioFileSize == null || audioFileSize <= 0) {
+            return "0 B";
+        }
+        if (audioFileSize < 1024) {
+            return audioFileSize + " B";
+        } else if (audioFileSize < 1024 * 1024) {
+            return String.format("%.1f KB", audioFileSize / 1024.0);
+        } else {
+            return String.format("%.1f MB", audioFileSize / (1024.0 * 1024.0));
+        }
     }
 }

@@ -369,6 +369,14 @@
 
                     <!-- Song Action Buttons -->
                     <div class="flex items-center gap-1.5 ml-auto">
+                        <!-- Download Authorized Audio (Only when available) -->
+                        <a th:if="${song.hasAudioFile()}" 
+                           th:href="@{/song/{id}/download(id=${song.id})}" 
+                           class="w-8 h-8 flex items-center justify-center rounded-full text-primary hover:text-white hover:bg-primary-container transition-colors active:scale-95"
+                           th:title="'Download ' + ${song.audioFileName != null ? song.audioFileName : 'audio'} + ' (' + ${song.formattedAudioFileSize} + ')'">
+                            <span class="material-symbols-outlined text-[16px]">download</span>
+                        </a>
+
                         <!-- Details Button -->
                         <a th:href="@{/song/{id}(id=${song.id})}" 
                            class="h-8 px-3 rounded-full bg-surface-container-high hover:bg-surface-bright text-on-surface hover:text-primary text-xs font-semibold flex items-center gap-1 transition-all active:scale-95">

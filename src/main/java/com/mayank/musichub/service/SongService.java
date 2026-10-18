@@ -14,11 +14,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+
 @Service
 public class SongService {
 
     @Autowired
     private SongRepository songRepository;
+
+    @Autowired
+    private AudioStorageService audioStorageService;
 
     public List<Song> getAllSongs() {
         return songRepository.findAll();
@@ -27,41 +33,86 @@ public class SongService {
     public Song saveSong(Song song) {
         return songRepository.save(song);
     }
+
+    public Song saveSongWithAudio(Song song, MultipartFile audioFile) throws IOException {
+        if (audioFile != null && !audioFile.isEmpty()) {
+            AudioStorageService.AudioStorageResult result = audioStorageService.storeAudioFile(audioFile);
+            song.setAudioStorageKey(result.storageKey());
+            song.setAudioFileName(result.originalFileName());
+            song.setAudioContentType(result.contentType());
+            song.setAudioFileSize(result.fileSize());
+        }
+        return songRepository.save(song);
+    }
+
     public List<Song> getSongsByArtist(String artist) {
-    return songRepository.findByArtist(artist);
-}
+        return songRepository.findByArtist(artist);
+    }
+
     public Song getSongById(Integer id) {
-    return songRepository.findById(id).orElse(null);
-}
-public Song updateSong(Integer id, Song updatedSong) {
+        return songRepository.findById(id).orElse(null);
+    }
 
-    Song existingSong = songRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Song not found"));
+    public Song updateSong(Integer id, Song updatedSong) {
+        return updateSongWithAudio(id, updatedSong, null, false);
+    }
 
-    existingSong.setTitle(updatedSong.getTitle());
-    existingSong.setArtist(updatedSong.getArtist());
-    existingSong.setAlbum(updatedSong.getAlbum());
-    existingSong.setImageUrl(updatedSong.getImageUrl());
-    existingSong.setGenre(updatedSong.getGenre());
-    existingSong.setLanguage(updatedSong.getLanguage());
-    existingSong.setRating(updatedSong.getRating());
-    existingSong.setDuration(updatedSong.getDuration());
-    existingSong.setReleaseYear(updatedSong.getReleaseYear());
-    existingSong.setYoutubeUrl(updatedSong.getYoutubeUrl());
-    existingSong.setFavorite(updatedSong.getFavorite());
-    existingSong.setLyrics(updatedSong.getLyrics());
-    existingSong.setSpotifyUrl(updatedSong.getSpotifyUrl());
+    public Song updateSongWithAudio(Integer id, Song updatedSong, MultipartFile audioFile, boolean removeAudio) {
+        Song existingSong = songRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Song not found with id: " + id));
 
-    songRepository.save(existingSong);
+        existingSong.setTitle(updatedSong.getTitle());
+        existingSong.setArtist(updatedSong.getArtist());
+        existingSong.setAlbum(updatedSong.getAlbum());
+        existingSong.setImageUrl(updatedSong.getImageUrl());
+        existingSong.setGenre(updatedSong.getGenre());
+        existingSong.setLanguage(updatedSong.getLanguage());
+        existingSong.setRating(updatedSong.getRating());
+        existingSong.setDuration(updatedSong.getDuration());
+        existingSong.setReleaseYear(updatedSong.getReleaseYear());
+        existingSong.setYoutubeUrl(updatedSong.getYoutubeUrl());
+        existingSong.setFavorite(updatedSong.getFavorite());
+        existingSong.setLyrics(updatedSong.getLyrics());
+        existingSong.setSpotifyUrl(updatedSong.getSpotifyUrl());
+        existingSong.setAudioUrl(updatedSong.getAudioUrl());
 
-    return songRepository.save(existingSong);
-}
-public void deleteSong(Integer id) {
-     Song existingSong = songRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Song not found"));
+        if (removeAudio) {
+            if (existingSong.getAudioStorageKey() != null) {
+                audioStorageService.deleteAudioFile(existingSong.getAudioStorageKey());
+                existingSong.setAudioStorageKey(null);
+                existingSong.setAudioFileName(null);
+                existingSong.setAudioContentType(null);
+                existingSong.setAudioFileSize(null);
+            }
+        } else if (audioFile != null && !audioFile.isEmpty()) {
+            try {
+                // Delete previous file if one existed
+                if (existingSong.getAudioStorageKey() != null) {
+                    audioStorageService.deleteAudioFile(existingSong.getAudioStorageKey());
+                }
+                AudioStorageService.AudioStorageResult result = audioStorageService.storeAudioFile(audioFile);
+                existingSong.setAudioStorageKey(result.storageKey());
+                existingSong.setAudioFileName(result.originalFileName());
+                existingSong.setAudioContentType(result.contentType());
+                existingSong.setAudioFileSize(result.fileSize());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload audio file: " + e.getMessage(), e);
+            }
+        }
 
-    songRepository.delete(existingSong);
-}
+        return songRepository.save(existingSong);
+    }
+
+    public void deleteSong(Integer id) {
+        Song existingSong = songRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Song not found with id: " + id));
+
+        if (existingSong.getAudioStorageKey() != null) {
+            audioStorageService.deleteAudioFile(existingSong.getAudioStorageKey());
+        }
+
+        songRepository.delete(existingSong);
+    }
 public List<Song> getSongsByTitle(String title) {
     return songRepository.findByTitle(title);
 }

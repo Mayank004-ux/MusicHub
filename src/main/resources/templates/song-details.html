@@ -148,8 +148,9 @@
                     
                     <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 via-transparent to-transparent"></div>
                     
-                    <!-- Audio Player Play Trigger -->
-                    <button type="button" 
+                    <!-- Audio Player Play Trigger (Shown only when preview or file is available) -->
+                    <button th:if="${song.hasAudioPreview()}"
+                            type="button" 
                             id="hero-play-btn"
                             onclick="toggleAudioPlayback()"
                             aria-label="Play track" 
@@ -198,9 +199,22 @@
                         </div>
 
                         <!-- Quality Specs Pill -->
-                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant border border-white/5">
-                            <span class="material-symbols-outlined text-primary text-[15px]">high_quality</span>
-                            <span class="text-xs tracking-wide">FLAC 24-bit Lossless</span>
+                        <div th:if="${song.hasAudioFile()}" 
+                             class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-primary border border-primary/20"
+                             title="Authorized master audio file is attached">
+                            <span class="material-symbols-outlined text-primary text-[15px]">verified</span>
+                            <span class="text-xs tracking-wide font-medium" th:text="'Authorized Audio (' + ${song.formattedAudioFileSize} + ')'">Authorized Audio</span>
+                        </div>
+                        <div th:if="${!song.hasAudioFile() and song.audioUrl != null and !#strings.isEmpty(song.audioUrl)}" 
+                             class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-secondary border border-white/5"
+                             title="External legal audio preview link is configured">
+                            <span class="material-symbols-outlined text-secondary text-[15px]">headphones</span>
+                            <span class="text-xs tracking-wide">Legal Audio Preview</span>
+                        </div>
+                        <div th:if="${!song.hasAudioPreview()}" 
+                             class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-on-surface-variant/70 border border-white/5">
+                            <span class="material-symbols-outlined text-[15px]">volume_off</span>
+                            <span class="text-xs tracking-wide">Metadata Only</span>
                         </div>
                     </div>
                 </div>
@@ -245,10 +259,29 @@
 
         <!-- Interactive Utility Action Suite -->
         <div class="flex flex-wrap items-center gap-2.5">
-            <!-- Play Audio Pill -->
-            <button type="button" 
+            <!-- Download Button (Shown when authorized audio file exists) -->
+            <a th:if="${song.hasAudioFile()}" 
+               th:href="@{/song/{id}/download(id=${song.id})}" 
+               class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary-container hover:bg-secondary-container text-on-primary-container text-sm font-bold shadow-[0_0_16px_rgba(29,185,84,0.35)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+               title="Download authorized music file">
+                <span class="material-symbols-outlined text-[20px]">download</span>
+                <span>Download (<span th:text="${song.formattedAudioFileSize}">Audio</span>)</span>
+            </a>
+
+            <!-- Informative prompt when no file is uploaded yet -->
+            <a th:unless="${song.hasAudioFile()}" 
+               th:href="@{/song/edit/{id}(id=${song.id})}" 
+               class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary text-xs font-medium transition-all border border-dashed border-white/15"
+               title="Attach an authorized MP3/WAV file to enable downloads">
+                <span class="material-symbols-outlined text-[18px] text-primary">upload_file</span>
+                <span>Attach Audio to Enable Download</span>
+            </a>
+
+            <!-- Play Audio Pill (Shown only when preview or file is available) -->
+            <button th:if="${song.hasAudioPreview()}" 
+                    type="button" 
                     onclick="toggleAudioPlayback()"
-                    class="flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary-container hover:bg-secondary-container text-on-primary-container text-sm font-bold shadow-[0_0_16px_rgba(29,185,84,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all">
+                    class="flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-high text-primary hover:text-white text-sm font-bold border border-white/10 hover:scale-[1.02] active:scale-[0.98] transition-all">
                 <span id="play-btn-icon" class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
                 <span id="play-btn-text">Play Audio</span>
             </button>
@@ -291,8 +324,11 @@
             </form>
         </div>
 
-        <!-- Optional Audio Element for Playback Simulation -->
-        <audio id="audio-player" preload="none"></audio>
+        <!-- Audio Element for Streaming or Preview Playback -->
+        <audio id="audio-player" 
+               th:if="${song.hasAudioPreview()}" 
+               th:src="${song.hasAudioFile() ? '/song/' + song.id + '/stream' : song.audioUrl}" 
+               preload="metadata"></audio>
 
         <!-- External Streaming Connections Card -->
         <section th:if="${(song.spotifyUrl != null and !#strings.isEmpty(song.spotifyUrl)) or (song.youtubeUrl != null and !#strings.isEmpty(song.youtubeUrl))}" 
@@ -541,35 +577,42 @@
             }
         }
 
-        // Audio Player Simulation / Playback Toggle
+        // Audio Player Playback Toggle & Lifecycle
         function toggleAudioPlayback() {
             const audioPlayer = document.getElementById('audio-player');
             const playIcon = document.getElementById('play-icon');
             const btnIcon = document.getElementById('play-btn-icon');
             const btnText = document.getElementById('play-btn-text');
 
-            if (audioPlayer && audioPlayer.src) {
-                if (audioPlayer.paused) {
-                    audioPlayer.play();
+            if (!audioPlayer || !audioPlayer.src) {
+                if (btnText) {
+                    const original = btnText.textContent;
+                    btnText.textContent = 'No Audio Available';
+                    setTimeout(() => { btnText.textContent = original; }, 1800);
+                }
+                return;
+            }
+
+            if (audioPlayer.paused) {
+                audioPlayer.play().then(() => {
                     if (playIcon) playIcon.textContent = 'pause';
                     if (btnIcon) btnIcon.textContent = 'pause';
                     if (btnText) btnText.textContent = 'Pause Audio';
-                } else {
-                    audioPlayer.pause();
-                    if (playIcon) playIcon.textContent = 'play_arrow';
-                    if (btnIcon) btnIcon.textContent = 'play_arrow';
-                    if (btnText) btnText.textContent = 'Play Audio';
-                }
+                }).catch(err => {
+                    console.error('Audio playback error:', err);
+                });
             } else {
-                // If no audio source is configured, provide pleasant feedback
-                if (btnText) {
-                    const original = btnText.textContent;
-                    btnText.textContent = 'Audio Preview Active';
-                    setTimeout(() => {
-                        btnText.textContent = original;
-                    }, 1800);
-                }
+                audioPlayer.pause();
+                if (playIcon) playIcon.textContent = 'play_arrow';
+                if (btnIcon) btnIcon.textContent = 'play_arrow';
+                if (btnText) btnText.textContent = 'Play Audio';
             }
+
+            audioPlayer.onended = function() {
+                if (playIcon) playIcon.textContent = 'play_arrow';
+                if (btnIcon) btnIcon.textContent = 'play_arrow';
+                if (btnText) btnText.textContent = 'Play Audio';
+            };
         }
     </script>
 </body>
